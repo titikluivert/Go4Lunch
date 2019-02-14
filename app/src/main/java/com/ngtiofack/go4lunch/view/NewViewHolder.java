@@ -4,9 +4,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.ngtiofack.go4lunch.R;
+
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
+import com.ngtiofack.go4lunch.R;
 import com.ngtiofack.go4lunch.model.RestaurantsModel;
 
 import butterknife.BindView;

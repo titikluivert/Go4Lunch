@@ -2,7 +2,7 @@
     <string name="app_name">Go4Lunch</string>
     <string name="sign_in_with_facebook">Sign in with facebook</string>
     <string name="sign_in_with_google">Sign in with google</string>
-    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_activity_main2">I\'m Hungry!</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
@@ -27,5 +27,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+
+    <string name="save_lat__key">pref_key_lat</string>
+    <string name="save_Long__key">pref_key_lng</string>
 
 </resources>

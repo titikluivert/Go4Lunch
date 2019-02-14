@@ -1,10 +1,15 @@
 package com.ngtiofack.go4lunch.utils.services;
 
-import com.ngtiofack.go4lunch.model.RestaurantsModel;
 
-import retrofit.Call;
-import retrofit.http.GET;
-import retrofit.http.Query;
+import com.ngtiofack.go4lunch.model.RestaurantsModel;
+import com.ngtiofack.go4lunch.utils.Utils;
+
+import io.reactivex.Observable;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.GET;
+import retrofit2.http.Query;
 
 /**
  * Created by NG-TIOFACK on 2/13/2019.
@@ -15,10 +20,24 @@ public interface RetrofitMapsServices {
      * Retrofit get annotation with our URL
      * And our method that will return us details of student.
      */
+    /*
+     * Retrofit get annotation with our URL
+     * And our method that will return us details of student.
+     */
+
+
+    Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl(Utils.url)
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build();
+
     @GET("api/place/nearbysearch/json?sensor=true&key=AIzaSyCXBKZ5tT07uT8XdXsUuAMsVkV-Uxs70E8")
-    Call<RestaurantsModel> getNearbyPlaces(
+    Observable<RestaurantsModel> getNearbyPlaces(
             @Query("type") String type,
             @Query("location") String location,
-            @Query("radius") int radius);
+            @Query("radius") int radius
+
+    );
 
 }

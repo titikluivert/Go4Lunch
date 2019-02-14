@@ -1,102 +1,120 @@
 package com.ngtiofack.go4lunch.controller.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.RelativeLayout;
+import android.view.Menu;
+import android.view.MenuItem;
 
-import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.ErrorCodes;
-import com.firebase.ui.auth.IdpResponse;
 import com.ngtiofack.go4lunch.R;
+import com.ngtiofack.go4lunch.controller.fragments.ListViewFragment;
+import com.ngtiofack.go4lunch.controller.fragments.MapsViewFragment;
+import com.ngtiofack.go4lunch.controller.fragments.WorkmatesFragment;
+import com.ngtiofack.go4lunch.utils.CurrentLocation;
+import com.ngtiofack.go4lunch.utils.SaveCurrentLocation;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Objects;
 
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-public class MainActivity extends AppCompatActivity {
+    CurrentLocation currentLocation = new CurrentLocation();
+    //Drawer Layout
+    private DrawerLayout drawerLayout;
+    // define an ActionBarDrawerToggle
+    private ActionBarDrawerToggle mToggle;
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
-    // 1 - Identifier for Sign-In Activity
-    private static final int RC_SIGN_IN = 123;
-    // Choose authentication providers
-    private List<AuthUI.IdpConfig> providers = Arrays.asList(
-            new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()); // SUPPORT GOOGLE
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
+            Fragment selectedFragment = null;
+
+            switch (item.getItemId()) {
+                case R.id.navigation_home:
+                    selectedFragment = new MapsViewFragment();
+                    break;
+                case R.id.navigation_dashboard:
+                    SaveCurrentLocation currentLatLng = currentLocation.getSaveLatLng(MainActivity.this);
+                    selectedFragment = ListViewFragment.newInstance(String.valueOf(currentLatLng.getLatitude()), String.valueOf(currentLatLng.getLongitude()));
+                    break;
+                case R.id.navigation_notifications:
+                    selectedFragment = new WorkmatesFragment();
+                    break;
+            }
+            assert selectedFragment != null;
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
+            return true;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main2);
 
-        RelativeLayout mButton_login = findViewById(R.id.relative_google);
-        mButton_login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 3 - Launch Sign-In Activity when user clicked on Login Button
-                startSignInActivity();
-            }
-        });
+        BottomNavigationView navigation = findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        RelativeLayout mButton_login_fcb = findViewById(R.id.relative_fcb);
-        mButton_login_fcb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 3 - Launch Sign-In Activity when user clicked on Login Button
-                Intent myIntent = new Intent(MainActivity.this, Main2Activity.class);
-                startActivity(myIntent);
-            }
-        });
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                new MapsViewFragment()).commit();
 
 
-    }
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
-    private void startSignInActivity() {
-        startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(providers) // SUPPORT GOOGLE
-                        .setIsSmartLockEnabled(false, true)
-                        .build(),
-                RC_SIGN_IN);
+        drawerLayout = findViewById(R.id.drawer_main_id);
+        mToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
+        drawerLayout.addDrawerListener(mToggle);
+        mToggle.syncState();
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        // 4 - Handle SignIn Activity response on activity result
-        this.handleResponseAfterSignIn(requestCode, resultCode, data);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //2 - Inflate the menu and add it to the Toolbar
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+        return true;
     }
-    // --------------------
-    // UTILS
-    // --------------------
-    // 3 - Method that handles response after SignIn Activity close
 
-    private void handleResponseAfterSignIn(int requestCode, int resultCode, Intent data) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //3 - Handle actions on menu items
+        switch (item.getItemId()) {
 
-        IdpResponse response = IdpResponse.fromResultIntent(data);
-
-        if (requestCode == RC_SIGN_IN) {
-            if (resultCode == RESULT_OK) { // SUCCESS
-                //showSnackBar(getWindow().getDecorView().getRootView(), getString(R.string.connection_succeed));
-                Intent myIntent = new Intent(MainActivity.this, Main2Activity.class);
-                this.startActivity(myIntent);
-                Snackbar.make(getWindow().getDecorView().getRootView(), R.string.connection_succeed, Snackbar.LENGTH_LONG).setAction("Action", null).show();
-            } else { // ERRORS
-                if (response == null) {
-                    Snackbar.make(getWindow().getDecorView().getRootView(), R.string.error_authentication_canceled, Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                    // showSnackBar(getWindow().getDecorView().getRootView(), getString(R.string.error_authentication_canceled));
-                } else if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
-                    Snackbar.make(getWindow().getDecorView().getRootView(), R.string.error_no_internet, Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                    // showSnackBar(getWindow().getDecorView().getRootView(), getString(R.string.error_no_internet));
-                } else if (response.getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
-                    Snackbar.make(getWindow().getDecorView().getRootView(), R.string.error_unknown_error, Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                    //showSnackBar(getWindow().getDecorView().getRootView(), getString(R.string.error_unknown_error));
+            case R.id.menu_activity_main_search:
+                return true;
+            default:
+                if (mToggle.onOptionsItemSelected(item)) {
+                    return true;
                 }
-            }
+                return super.onOptionsItemSelected(item);
         }
     }
 
-}
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
+        switch (menuItem.getItemId()) {
+            case R.id.menu_drawer_your_lunch:
+
+                break;
+            case R.id.menu_drawer_settings:
+
+                break;
+            case R.id.menu_drawer_logout:
+
+                break;
+            default:
+                break;
+        }
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+}

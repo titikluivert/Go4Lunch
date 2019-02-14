@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -31,13 +32,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.ngtiofack.go4lunch.R;
 import com.ngtiofack.go4lunch.model.RestaurantsModel;
+import com.ngtiofack.go4lunch.utils.CurrentLocation;
+import com.ngtiofack.go4lunch.utils.RestaurantsServiceStreams;
 import com.ngtiofack.go4lunch.utils.Utils;
-import com.ngtiofack.go4lunch.utils.services.RetrofitMapsServices;
 
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.GsonConverterFactory;
-import retrofit.Retrofit;
+import io.reactivex.observers.DisposableObserver;
 
 import static com.ngtiofack.go4lunch.utils.Utils.PROXIMITY_RADIUS;
 import static com.ngtiofack.go4lunch.utils.Utils.TYPE;
@@ -47,15 +46,33 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
 
     public static final int MY_PERMISSION_REQUEST_CODE = 11;
     FusedLocationProviderClient mFusedLocationClient;
+    double latitude;
+    double longitude;
+    CurrentLocation currentLocation = new CurrentLocation();
     private GoogleMap mMap;
     private View mView;
     private Marker mCurrLocationMarker;
+    LocationCallback mLocationCallback = new LocationCallback() {
 
-    double latitude;
-    double longitude;
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+
+            for (Location location : locationResult.getLocations()) {
+
+                Log.i("MapsActivity", "Location: " + location.getLatitude() + " " + location.getLongitude());
+                if (mCurrLocationMarker != null) {
+                    mCurrLocationMarker.remove();
+                }
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+
+                build_retrofit_and_get_response(location);
+
+            }
+        }
+    };
 
     public MapsViewFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -108,26 +125,6 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
-    LocationCallback mLocationCallback = new LocationCallback() {
-
-        @Override
-        public void onLocationResult(LocationResult locationResult) {
-
-            for (Location location : locationResult.getLocations()) {
-
-                Log.i("MapsActivity", "Location: " + location.getLatitude() + " " + location.getLongitude());
-                if (mCurrLocationMarker != null) {
-                    mCurrLocationMarker.remove();
-                }
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
-
-                build_retrofit_and_get_response(location);
-
-            }
-        }
-    };
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
@@ -148,31 +145,21 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-
     private void build_retrofit_and_get_response(final Location mLocation) {
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Utils.url)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        RetrofitMapsServices service = retrofit.create(RetrofitMapsServices.class);
-
-        Call<RestaurantsModel> call = service.getNearbyPlaces(TYPE, latitude + "," + longitude, PROXIMITY_RADIUS);
-
-        call.enqueue(new Callback<RestaurantsModel>() {
+        DisposableObserver<RestaurantsModel> disposable = RestaurantsServiceStreams.streamFetchRestaurantsItems(TYPE, latitude + "," + longitude, PROXIMITY_RADIUS).subscribeWith(new DisposableObserver<RestaurantsModel>() {
 
             @Override
-            public void onResponse(retrofit.Response<RestaurantsModel> response, Retrofit retrofit) {
+            public void onNext(RestaurantsModel results) {
                 try {
                     mMap.clear();
                     // This loop will go through all the results and add marker on each location.
-                    for (int i = 0; i < response.body().getResults().size(); i++) {
+                    for (int i = 0; i < results.getResults().size(); i++) {
 
-                        double lat = response.body().getResults().get(i).getGeometry().getLocation().getLat();
-                        double lng = response.body().getResults().get(i).getGeometry().getLocation().getLng();
-                        String placeName = response.body().getResults().get(i).getName();
-                        String vicinity = response.body().getResults().get(i).getVicinity();
+                        double lat = results.getResults().get(i).getGeometry().getLocation().getLat();
+                        double lng = results.getResults().get(i).getGeometry().getLocation().getLng();
+                        String placeName = results.getResults().get(i).getName();
+                        String vicinity = results.getResults().get(i).getVicinity();
                         MarkerOptions markerOptions = new MarkerOptions();
                         LatLng latLng = new LatLng(lat, lng);
                         // Position of Marker on Map
@@ -187,8 +174,7 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
                         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                         mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
 
-                        if (i == response.body().getResults().size()-1)
-                        {
+                        if (i == results.getResults().size() - 1) {
                             //Place current location marker
                             LatLng yourLocation = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
                             //MarkerOptions markerOptions = new MarkerOptions();
@@ -207,10 +193,22 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
             }
 
             @Override
-            public void onFailure(Throwable t) {
-                Log.d("onFailure", t.toString());
+            public void onError(Throwable e) {
+                Log.e("", "There is an error" + e);
+            }
+
+            @Override
+            public void onComplete() {
+                Log.e("", "on complete is running");
             }
         });
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        currentLocation.saveLatLng(mView.getContext(), (float) latitude, (float) longitude);
 
     }
 }
