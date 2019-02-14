@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <item
+        android:id="@+id/menu_drawer_your_lunch"
+        android:title="@string/your_lunch"
+        android:icon="@drawable/ic_restaurant_menu_black_24dp"
+        app:showAsAction="never">
+
+    </item>
+    <item
+        android:id="@+id/menu_drawer_settings"
+        android:icon="@drawable/ic_settings_black_24dp"
+        android:title="@string/settings"
+        app:showAsAction="never">
+
+    </item>
+    <item
+        android:id="@+id/menu_drawer_logout"
+        android:icon="@drawable/ic_power_settings_new_black_24dp"
+        android:title="@string/logout"
+        app:showAsAction="never">
+
+    </item>
+
+
+</menu>
