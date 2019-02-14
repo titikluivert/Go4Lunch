@@ -16,52 +16,52 @@ import java.util.List;
 /**
  * Created by NG-TIOFACK on 12/19/2018.
  */
-public class NewAdapter extends RecyclerView.Adapter<NewViewHolder> {
+public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsViewHolder> {
 
 // FOR DATA
 
 
-    private List<RestaurantsModel.Result> myDocsList;
+    private List<RestaurantsModel.Result> myRestaurantsList;
     // 1 - Declaring a Glide object
     private RequestManager glide;
 
     // 2 - Updating our constructor adding a Glide Object
-    public NewAdapter(List<RestaurantsModel.Result> mostBusinessDocsList, RequestManager glide) {
-        this.myDocsList = mostBusinessDocsList;
+    public RestaurantsAdapter(List<RestaurantsModel.Result> mostBusinessDocsList, RequestManager glide) {
+        this.myRestaurantsList = mostBusinessDocsList;
         this.glide = glide;
     }
 
-    public void setDocList(List<RestaurantsModel.Result> list) {
-        this.myDocsList = list;
+    public void setRestaurantList(List<RestaurantsModel.Result> list) {
+        this.myRestaurantsList = list;
         this.notifyDataSetChanged();
     }
 
     @NonNull
     @Override
-    public NewViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RestaurantsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // CREATE VIEW HOLDER AND INFLATING ITS XML LAYOUT
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.fragment_item_list_view, parent, false);
 
-        return new NewViewHolder(view);
+        return new RestaurantsViewHolder(view);
     }
 
     // UPDATE VIEW HOLDER WITH A TOP STORIES
     @Override
-    public void onBindViewHolder(@NonNull NewViewHolder viewHolder, int position) {
+    public void onBindViewHolder(@NonNull RestaurantsViewHolder viewHolder, int position) {
         // - 3 Passing the Glide object to each ViewHolder
-        viewHolder.updateWithNews(this.myDocsList.get(position), this.glide);
+        viewHolder.updateWithRestaurants(this.myRestaurantsList.get(position), this.glide);
     }
 
     // RETURN THE TOTAL COUNT OF ITEMS IN THE LIST
     @Override
     public int getItemCount() {
 
-        return this.myDocsList.size();
+        return this.myRestaurantsList.size();
     }
 
-    public RestaurantsModel.Result getBusinessDoc(int position) {
-        return this.myDocsList.get(position);
+    public RestaurantsModel.Result getRestaurantsResults(int position) {
+        return this.myRestaurantsList.get(position);
     }
 }

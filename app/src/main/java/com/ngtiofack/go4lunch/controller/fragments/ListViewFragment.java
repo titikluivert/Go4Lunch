@@ -14,11 +14,11 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.ngtiofack.go4lunch.R;
-import com.ngtiofack.go4lunch.controller.activities.DetailledRestaurant;
+import com.ngtiofack.go4lunch.controller.activities.DetailedRestaurant;
 import com.ngtiofack.go4lunch.model.RestaurantsModel;
 import com.ngtiofack.go4lunch.utils.ItemClickSupport;
 import com.ngtiofack.go4lunch.utils.RestaurantsServiceStreams;
-import com.ngtiofack.go4lunch.view.NewAdapter;
+import com.ngtiofack.go4lunch.view.RestaurantsAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +31,7 @@ import static com.ngtiofack.go4lunch.utils.Utils.PROXIMITY_RADIUS;
 import static com.ngtiofack.go4lunch.utils.Utils.TYPE;
 
 public class ListViewFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     @BindView(R.id.list_view_recycler_view)
@@ -40,16 +39,15 @@ public class ListViewFragment extends Fragment {
     // 1 - Declare the SwipeRefreshLayout
     @BindView(R.id.list_view__swipe_container)
     SwipeRefreshLayout swipeRefreshLayout;
-    // TODO: Rename and change types of parameters
+
     private String mParam1;
     private String mParam2;
     // 2 - Declare list of results (MostPopular) & Adapter
     private List<RestaurantsModel.Result> myResultsList;
-    private NewAdapter adapter;
+    private RestaurantsAdapter adapter;
     private RestaurantsModel.Result response;
 
     public ListViewFragment() {
-        // Required empty public constructor
     }
 
     public static ListViewFragment newInstance(String param1, String param2) {
@@ -64,7 +62,6 @@ public class ListViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -108,7 +105,7 @@ public class ListViewFragment extends Fragment {
         // 3.1 - Reset list
         this.myResultsList = new ArrayList<>();
         // 3.2 - Create adapter passing the list of users
-        this.adapter = new NewAdapter(this.myResultsList, Glide.with(this));
+        this.adapter = new RestaurantsAdapter(this.myResultsList, Glide.with(this));
         // 3.3 - Attach the adapter to the recyclerview to populate items
         this.recyclerView.setAdapter(this.adapter);
         // 3.4 - Set layout manager to position the items
@@ -121,15 +118,14 @@ public class ListViewFragment extends Fragment {
                 .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        response = adapter.getBusinessDoc(position);
+                        response = adapter.getRestaurantsResults(position);
                         //TODO
-                        Intent myIntent = new Intent(getActivity(), DetailledRestaurant.class);
+                        Intent myIntent = new Intent(getActivity(), DetailedRestaurant.class);
                         //myIntent.putExtra(getString(R.string.articleUrl), response.getWebUrl());
                         startActivity(myIntent);
                     }
                 });
     }
-
 
     private void executeHttpRequestWithRetrofitNews(String latitude, String longitude) {
 
@@ -159,7 +155,7 @@ public class ListViewFragment extends Fragment {
         swipeRefreshLayout.setRefreshing(false);
         myResultsList.clear();
         myResultsList.addAll(results);
-        adapter.setDocList(myResultsList);
+        adapter.setRestaurantList(myResultsList);
     }
 
 }

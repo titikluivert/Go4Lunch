@@ -24,7 +24,7 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:name=".controller.activities.DetailledRestaurant">
+            android:name=".controller.activities.DetailedRestaurant">
 
         </activity>
         <!--

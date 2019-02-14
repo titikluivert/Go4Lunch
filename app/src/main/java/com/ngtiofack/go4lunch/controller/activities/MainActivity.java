@@ -11,7 +11,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import com.ngtiofack.go4lunch.R;
 import com.ngtiofack.go4lunch.controller.fragments.ListViewFragment;
 import com.ngtiofack.go4lunch.controller.fragments.MapsViewFragment;

@@ -13,8 +13,8 @@
         android:paddingEnd="5dp">
 
         <LinearLayout
-            android:layout_width="300dp"
-            android:layout_height="85dp"
+            android:layout_width="270dp"
+            android:layout_height="90dp"
             android:layout_margin="5dp"
             android:gravity="center"
             android:orientation="vertical">
@@ -22,7 +22,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
                 android:gravity="center"
                 android:orientation="horizontal">
 
@@ -48,7 +47,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
                 android:gravity="center"
                 android:orientation="horizontal">
 
@@ -56,23 +54,22 @@
                     android:id="@+id/addressOfRestaurant"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
                     android:layout_weight="1"
-                    android:textSize="15sp" />
+                    android:textSize="12sp"
+                    />
 
                 <ImageView
                     android:id="@+id/numOfInterestedImg"
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
                     app:srcCompat="@drawable/ic_person_outline_black_24dp" />
 
                 <TextView
                     android:id="@+id/numOfInterested"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="(2)"
-                    android:textAlignment="textEnd"
-                    android:textSize="5sp" />
+                    />
 
 
             </LinearLayout>
@@ -80,21 +77,32 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
                 android:gravity="center"
                 android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/closeTimeOfRestaurant"
                     android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_margin="5dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:textAlignment="textStart"
-                    android:textSize="15sp" />
+                    android:textStyle="italic"/>
                 <ImageView
-                    android:id="@+id/numOfStars"
-                    android:layout_width="7dp"
-                    android:layout_height="7dp"
+                    android:id="@+id/numOfStars_0"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    app:srcCompat="@drawable/ic_star_black_24dp"
+                    android:textAlignment="textEnd"/>
+                <ImageView
+                    android:id="@+id/numOfStars_1"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    app:srcCompat="@drawable/ic_star_black_24dp" />
+
+                <ImageView
+                    android:id="@+id/numOfStars_2"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
                     app:srcCompat="@drawable/ic_star_black_24dp" />
 
             </LinearLayout>
@@ -103,8 +111,8 @@
 
         <ImageView
             android:id="@+id/fragment_item_image"
-            android:layout_width="85dp"
-            android:layout_height="85dp"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
             android:layout_margin="5dp" />
 
 
@@ -113,7 +121,6 @@
     <View
         android:id="@+id/view"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="5dp" />
+        android:layout_height="3dp" />
 
 </LinearLayout>
