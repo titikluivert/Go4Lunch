@@ -34,8 +34,8 @@ public class RestaurantsViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.closeTimeOfRestaurant)
     TextView closeTime;
 
-    CurrentLocation currentLocation = new CurrentLocation();
-    SaveCurrentLocation LatLng;
+    private CurrentLocation currentLocation = new CurrentLocation();
+    private SaveCurrentLocation LatLng;
 
     public RestaurantsViewHolder(View itemView) {
         super(itemView);
@@ -55,11 +55,13 @@ public class RestaurantsViewHolder extends RecyclerView.ViewHolder {
                 (double) LatLng.getLongitude()
         )) + "m");
         this.addressRestaurant.setText(result.getVicinity());
-        String openHours;
-        if (result.getOpeningHours().getOpenNow()) {
-            openHours = "is Open";
-        } else {
-            openHours = "is closed";
+        String openHours = "Not available";
+        if (result.getOpeningHours() != null) {
+            if (result.getOpeningHours().getOpenNow()) {
+                openHours = "is Open";
+            } else {
+                openHours = "is closed";
+            }
         }
         this.closeTime.setText(openHours);
 

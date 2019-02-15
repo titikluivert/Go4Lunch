@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.bumptech.glide.Glide;
 import com.ngtiofack.go4lunch.R;
 import com.ngtiofack.go4lunch.controller.activities.DetailedRestaurant;
@@ -25,6 +24,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 
 import static com.ngtiofack.go4lunch.utils.Utils.PROXIMITY_RADIUS;
@@ -39,6 +39,9 @@ public class ListViewFragment extends Fragment {
     // 1 - Declare the SwipeRefreshLayout
     @BindView(R.id.list_view__swipe_container)
     SwipeRefreshLayout swipeRefreshLayout;
+
+    //FOR DATA
+    private Disposable disposable;
 
     private String mParam1;
     private String mParam2;
@@ -85,6 +88,7 @@ public class ListViewFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        this.disposeWhenDestroy();
     }
 
     // 2 - Configure the SwipeRefreshLayout
@@ -99,7 +103,9 @@ public class ListViewFragment extends Fragment {
     // -----------------
     // CONFIGURATION
     // -----------------
-
+    private void disposeWhenDestroy() {
+        if (this.disposable != null && !this.disposable.isDisposed()) this.disposable.dispose();
+    }
     // 3 - Configure RecyclerView, Adapter, LayoutManager & glue it together
     private void configureRecyclerView() {
         // 3.1 - Reset list
@@ -129,7 +135,7 @@ public class ListViewFragment extends Fragment {
 
     private void executeHttpRequestWithRetrofitNews(String latitude, String longitude) {
 
-        DisposableObserver<RestaurantsModel> disposable = RestaurantsServiceStreams.streamFetchRestaurantsItems(TYPE, latitude + "," + longitude, PROXIMITY_RADIUS).subscribeWith(new DisposableObserver<RestaurantsModel>() {
+        this.disposable = RestaurantsServiceStreams.streamFetchRestaurantsItems(TYPE, latitude + "," + longitude, PROXIMITY_RADIUS).subscribeWith(new DisposableObserver<RestaurantsModel>() {
 
             @Override
             public void onNext(RestaurantsModel results) {

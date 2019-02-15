@@ -1,9 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<LinearLayoutt
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:id="@+id/constraintLayout"
     android:layout_height="match_parent"
-    tools:context=".controller.activities.DetailedRestaurant">
+    android:layout_width="match_parent">
 
-</android.support.constraint.ConstraintLayout>
+    <ImageView
+        android:id="@+id/image_shot"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/restaurants_img"
+        />
+
+
+    <TextView
+        android:id="@+id/text_like_count"
+        tools:text="1,287"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"/>
+
+</LinearLayoutt>
