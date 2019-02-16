@@ -13,15 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.ngtiofack.go4lunch.R;
-import com.ngtiofack.go4lunch.controller.activities.DetailedRestaurant;
+import com.ngtiofack.go4lunch.controller.activities.DetailedRestaurantActivity;
 import com.ngtiofack.go4lunch.model.RestaurantsModel;
 import com.ngtiofack.go4lunch.utils.ItemClickSupport;
 import com.ngtiofack.go4lunch.utils.RestaurantsServiceStreams;
 import com.ngtiofack.go4lunch.view.RestaurantsAdapter;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.disposables.Disposable;
@@ -126,7 +124,7 @@ public class ListViewFragment extends Fragment {
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                         response = adapter.getRestaurantsResults(position);
                         //TODO
-                        Intent myIntent = new Intent(getActivity(), DetailedRestaurant.class);
+                        Intent myIntent = new Intent(getActivity(), DetailedRestaurantActivity.class);
                         //myIntent.putExtra(getString(R.string.articleUrl), response.getWebUrl());
                         startActivity(myIntent);
                     }
@@ -163,6 +161,5 @@ public class ListViewFragment extends Fragment {
         myResultsList.addAll(results);
         adapter.setRestaurantList(myResultsList);
     }
-
 }
 

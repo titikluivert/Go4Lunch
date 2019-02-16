@@ -24,7 +24,9 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:name=".controller.activities.DetailedRestaurant">
+            android:name=".controller.activities.DetailedRestaurantActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
 
         </activity>
         <!--
