@@ -169,6 +169,7 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
                         // Adding Marker to the Camera.
                         Marker m = mMap.addMarker(markerOptions);
                         // Adding colour to the marker
+                        markerOptions.icon(BitmapDescriptorFactory.fromPath(results.getResults().get(i).getIcon()));
                         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                         // move map camera
                         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));

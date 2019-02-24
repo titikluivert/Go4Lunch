@@ -34,12 +34,12 @@ public class RestaurantsViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.closeTimeOfRestaurant)
     TextView closeTime;
 
-    private CurrentLocation currentLocation = new CurrentLocation();
     private SaveCurrentLocation LatLng;
 
     public RestaurantsViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
+        CurrentLocation currentLocation = new CurrentLocation();
         LatLng = currentLocation.getSaveLatLng(itemView.getContext());
     }
 
@@ -65,7 +65,7 @@ public class RestaurantsViewHolder extends RecyclerView.ViewHolder {
         }
         this.closeTime.setText(openHours);
 
-        glide.load(R.drawable.restaurant_default_img).apply(RequestOptions.circleCropTransform()).into(imageView);
+        glide.load(R.drawable.restaurants_img).apply(RequestOptions.circleCropTransform()).into(imageView);
        /* if (result.getPhotos().size() == 0) {
             glide.load(R.drawable.restaurant_default_img).apply(RequestOptions.circleCropTransform()).into(imageView);
         } else {

@@ -3,33 +3,47 @@ package com.ngtiofack.go4lunch.controller.activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.ngtiofack.go4lunch.R;
+import com.ngtiofack.go4lunch.utils.Go4LunchUserHelper;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 
 public class LoginActivity extends AppCompatActivity {
 
     // 1 - Identifier for Sign-In Activity
     private static final int RC_SIGN_IN = 123;
+
+    // User info
+
+    //FOR DESIGN
+
+
     // Choose authentication providers
     private List<AuthUI.IdpConfig> providers = Arrays.asList(
-            new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()); // SUPPORT GOOGLE
-
+            new AuthUI.IdpConfig.GoogleBuilder().build()// SUPPORT GOOGLE
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
+
 
         RelativeLayout mButton_login = findViewById(R.id.relative_google);
         mButton_login.setOnClickListener(new View.OnClickListener() {
@@ -120,10 +134,10 @@ public class LoginActivity extends AppCompatActivity {
                 if (response == null) {
                     Snackbar.make(getWindow().getDecorView().getRootView(), R.string.error_authentication_canceled, Snackbar.LENGTH_LONG).setAction("Action", null).show();
                     // showSnackBar(getWindow().getDecorView().getRootView(), getString(R.string.error_authentication_canceled));
-                } else if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
+                } else if (Objects.requireNonNull(response.getError()).getErrorCode() == ErrorCodes.NO_NETWORK) {
                     Snackbar.make(getWindow().getDecorView().getRootView(), R.string.error_no_internet, Snackbar.LENGTH_LONG).setAction("Action", null).show();
                     // showSnackBar(getWindow().getDecorView().getRootView(), getString(R.string.error_no_internet));
-                } else if (response.getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
+                } else if (response.getError().getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
                     Snackbar.make(getWindow().getDecorView().getRootView(), R.string.error_unknown_error, Snackbar.LENGTH_LONG).setAction("Action", null).show();
                     //showSnackBar(getWindow().getDecorView().getRootView(), getString(R.string.error_unknown_error));
                 }
@@ -133,8 +147,42 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void onLoginSuccess() {
+        createUserInFirestore();
         Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(myIntent);
+    }
+
+    protected FirebaseUser getCurrentUser() {
+        return FirebaseAuth.getInstance().getCurrentUser();
+    }
+
+    protected Boolean isCurrentUserLogged() {
+        return (this.getCurrentUser() != null);
+    }
+
+
+    private void createUserInFirestore() {
+
+        if (this.getCurrentUser() != null) {
+
+            String urlPicture = (this.getCurrentUser().getPhotoUrl() != null) ? this.getCurrentUser().getPhotoUrl().toString() : null;
+            String username = this.getCurrentUser().getDisplayName();
+            String uid = this.getCurrentUser().getUid();
+            boolean isConnected = this.isCurrentUserLogged();
+            String restaurantSel = "";
+
+            Go4LunchUserHelper.createUser(uid, username, urlPicture, isConnected, restaurantSel).addOnFailureListener(this.onFailureListener());
+        }
+    }
+
+    protected OnFailureListener onFailureListener() {
+        return new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext(), getString(R.string.error_unknown_error), Toast.LENGTH_LONG).show();
+            }
+        };
+
     }
 }
 

@@ -16,7 +16,7 @@ public class Utils {
     public static int getDistanceToRestaurants(double latA, double longA, double latB, double longB) {
         final double a = 111.16;
         double temp = (Math.abs(Math.sqrt((longA - longB) * (longA - longB) + (latA - latB) * (latA - latB)) * a)) * 1000;
-        return (int)temp;
+        return (int) temp;
     }
 }
 

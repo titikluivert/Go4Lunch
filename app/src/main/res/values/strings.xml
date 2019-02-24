@@ -30,5 +30,8 @@
 
     <string name="save_lat__key">pref_key_lat</string>
     <string name="save_Long__key">pref_key_lng</string>
+    <string name="info_email_not_found">info email not found</string>
+    <string name="info_user_name_not_found">info user name not found</string>
+    <string name="title_activity_base">BaseActivity</string>
 
 </resources>
