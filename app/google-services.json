@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "527615586151-6tf07d7qsns8lvbgiaeinol6c7irvnk1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ngtiofack.go4lunch",
+            "certificate_hash": "1afee2ed7faa9583ec1fee2bbcd81f8bff228f4b"
+          }
+        },
+        {
           "client_id": "527615586151-nvnd55d9d076jniq5d442c74drshae6r.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -48,7 +56,8 @@
         "ads_service": {
           "status": 2
         }
-      }
+      },
+      "admob_app_id": "ca-app-pub-3540799865068987~2258675484"
     }
   ],
   "configuration_version": "1"

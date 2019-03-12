@@ -9,7 +9,7 @@ public class Go4LunchUsers {
 
     private String uid;
     private String username;
-    private Boolean isConnected;
+    private boolean isConnected;
     private String restaurantSelected;
 
     @Nullable
@@ -31,7 +31,7 @@ public class Go4LunchUsers {
         return uid;
     }
 
-    public Boolean getIsConnected() {
+    public boolean getIsConnected() {
         return isConnected;
     }
 

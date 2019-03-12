@@ -66,7 +66,7 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
 
-                build_retrofit_and_get_response(location);
+                buildRetrofitAndGetResponse(location);
 
             }
         }
@@ -105,8 +105,8 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
 
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         LocationRequest locationRequest = new LocationRequest();
-        locationRequest.setInterval(120000); // two minute interval
-        locationRequest.setFastestInterval(120000);
+        locationRequest.setInterval(5000); // 5 secondes interval
+        locationRequest.setFastestInterval(5000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -145,7 +145,7 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    private void build_retrofit_and_get_response(final Location mLocation) {
+    private void buildRetrofitAndGetResponse(final Location mLocation) {
 
         DisposableObserver<RestaurantsModel> disposable = RestaurantsServiceStreams.streamFetchRestaurantsItems(TYPE, latitude + "," + longitude, PROXIMITY_RADIUS).subscribeWith(new DisposableObserver<RestaurantsModel>() {
 

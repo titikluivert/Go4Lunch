@@ -9,21 +9,16 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.ngtiofack.go4lunch.R;
 import com.ngtiofack.go4lunch.controller.fragments.ListViewFragment;
 import com.ngtiofack.go4lunch.controller.fragments.MapsViewFragment;
@@ -31,9 +26,10 @@ import com.ngtiofack.go4lunch.controller.fragments.WorkmatesFragment;
 import com.ngtiofack.go4lunch.utils.CurrentLocation;
 import com.ngtiofack.go4lunch.utils.Go4LunchUserHelper;
 import com.ngtiofack.go4lunch.utils.SaveCurrentLocation;
+
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     CurrentLocation currentLocation = new CurrentLocation();
     //Drawer Layout
@@ -77,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     };
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -105,8 +101,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // LinearLayout background = headView.findViewById(R.id.linLayoutHeader);
         // BlurImage.with(getApplicationContext()).load(R.drawable.restaurants_img).intensity(20).Async(true).into());
 
-
         this.updateUIWhenCreating();
+        this.createUserInFirestore();
     }
 
     @Override
@@ -151,13 +147,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    protected FirebaseUser getCurrentUser() {
-        return FirebaseAuth.getInstance().getCurrentUser();
-    }
-
-   protected Boolean isCurrentUserLogged() {
-        return (this.getCurrentUser() != null);    }
-
     // Update UI when activity is creating
     private void updateUIWhenCreating() {
 
@@ -188,7 +177,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-
     // 3 - Create OnCompleteListener called after tasks ended
     private OnSuccessListener<Void> updateUIAfterRESTRequestsCompleted(final int origin) {
         return new OnSuccessListener<Void>() {
@@ -206,8 +194,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         };
     }
 
-
-    private void deleteUserFromFirebase(){
+    private void deleteUserFromFirebase() {
         if (this.getCurrentUser() != null) {
 
             //4 - We also delete user from firestore storage
@@ -218,13 +205,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     // 3 - Update User Username
-    private void updateUsernameInFirebase(){
+    private void updateUsernameInFirebase() {
 
         //this.progressBar.setVisibility(View.VISIBLE);
         String username = this.textInputEditTextUsername.getText().toString();
 
-        if (this.getCurrentUser() != null){
-            if (!username.isEmpty() &&  !username.equals("user not found")){
+        if (this.getCurrentUser() != null) {
+            if (!username.isEmpty() && !username.equals("user not found")) {
                 Go4LunchUserHelper.updateUsername(username, this.getCurrentUser().getUid()).addOnFailureListener(this.onFailureListener()).addOnSuccessListener(this.updateUIAfterRESTRequestsCompleted(UPDATE_USERNAME));
             }
         }
@@ -237,12 +224,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    protected OnFailureListener onFailureListener(){
-        return new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(), getString(R.string.error_unknown_error), Toast.LENGTH_LONG).show();
-            }
-        };
+    // http request that creates a user in firestore
+
+    private void createUserInFirestore() {
+
+        if (this.getCurrentUser() != null) {
+
+            String urlPicture = (this.getCurrentUser().getPhotoUrl() != null) ? this.getCurrentUser().getPhotoUrl().toString() : null;
+            String username = this.getCurrentUser().getDisplayName();
+            String uid = this.getCurrentUser().getUid();
+            boolean isConnected = this.isCurrentUserLogged();
+            String restaurantSel = "";
+
+            Go4LunchUserHelper.createUser(uid, username, urlPicture, isConnected, restaurantSel).addOnFailureListener(this.onFailureListener());
+        }
     }
 }

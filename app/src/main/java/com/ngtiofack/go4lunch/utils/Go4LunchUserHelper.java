@@ -10,15 +10,13 @@ import com.ngtiofack.go4lunch.model.Go4LunchUsers;
  * Created by NG-TIOFACK on 2/16/2019.
 */
 
-
-
 public class Go4LunchUserHelper {
 
     private static final String COLLECTION_NAME = "users";
 
     // --- COLLECTION REFERENCE ---
 
-    public static CollectionReference getUsersCollection() {
+    private static CollectionReference getUsersCollection() {
         return FirebaseFirestore.getInstance().collection(COLLECTION_NAME);
     }
 
