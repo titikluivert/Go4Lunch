@@ -2,10 +2,13 @@
 <resources>
     <color name="colorPrimary">#FF5722</color>
     <color name="colorPrimaryDark">#C41B00</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorAccent">#FF8A50</color>
 
     <color name="colorFaceBook">#3F51B5</color>
     <color name="colorGoogle">#F4511E</color>
 
+    <color name="colorPrimaryDarkDyn">#585B5D</color>
+    <color name="colorNavDrawer">#FF8A50</color>
+    <color name="colorGrey">#D2D2D2</color>
 
 </resources>

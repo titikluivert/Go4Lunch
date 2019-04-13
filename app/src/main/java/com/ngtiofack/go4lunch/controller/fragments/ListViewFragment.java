@@ -18,6 +18,7 @@ import com.ngtiofack.go4lunch.controller.activities.DetailedRestaurantActivity;
 import com.ngtiofack.go4lunch.model.RestaurantsModel;
 import com.ngtiofack.go4lunch.utils.ItemClickSupport;
 import com.ngtiofack.go4lunch.utils.RestaurantsServiceStreams;
+import com.ngtiofack.go4lunch.utils.Utils;
 import com.ngtiofack.go4lunch.view.RestaurantsAdapter;
 
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ public class ListViewFragment extends Fragment {
 
     private String mParam1;
     private String mParam2;
+    private String photoUrl;
     // 2 - Declare list of results (MostPopular) & Adapter
     private List<RestaurantsModel.Result> myResultsList;
     private RestaurantsAdapter adapter;
@@ -130,6 +132,18 @@ public class ListViewFragment extends Fragment {
                         response = adapter.getRestaurantsResults(position);
                         //TODO
                         Intent myIntent = new Intent(getActivity(), DetailedRestaurantActivity.class);
+                        myIntent.putExtra(getString(R.string.name_restaurant), response.getName());
+                        myIntent.putExtra(getString(R.string.vicinity), response.getVicinity());
+
+                        if (response.getPhotos() == null) {
+                            photoUrl = "";
+                        } else {
+                            photoUrl = response.getPhotos().get(0).getPhotoReference();
+                            myIntent.putExtra(getString(R.string.photoHeight), response.getPhotos().get(0).getHeight());
+                            myIntent.putExtra(getString(R.string.photoWidth), response.getPhotos().get(0).getWidth());
+                        }
+                        myIntent.putExtra(getString(R.string.photosReference), photoUrl);
+                        myIntent.putExtra(getString(R.string.number_of_stars), response.getRating() == null ? 0 : Utils.getNumOfStars(response.getRating()));
                         //myIntent.putExtra(getString(R.string.articleUrl), response.getWebUrl());
                         startActivity(myIntent);
                     }
@@ -143,7 +157,6 @@ public class ListViewFragment extends Fragment {
             @Override
             public void onNext(RestaurantsModel results) {
                 updateUI(results.getResults());
-
             }
 
             @Override

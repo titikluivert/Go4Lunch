@@ -23,9 +23,11 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
+            android:name=".controller.activities.SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
+        <activity
             android:name=".controller.activities.DetailedRestaurantActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:screenOrientation="portrait" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").

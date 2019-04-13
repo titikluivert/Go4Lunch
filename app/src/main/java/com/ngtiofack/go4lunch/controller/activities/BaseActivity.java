@@ -14,7 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -48,7 +47,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected void showProgress(String msg) {
 
-        int llPadding = 30;
+        int llPadding = 50;
         LinearLayout ll = new LinearLayout(this);
         ll.setOrientation(LinearLayout.HORIZONTAL);
         ll.setPadding(llPadding, llPadding, llPadding, llPadding);
@@ -70,7 +69,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         TextView tvText = new TextView(this);
         tvText.setText(msg);
         tvText.setTextColor(Color.parseColor("#000000"));
-        tvText.setTextSize(20);
+        tvText.setTextSize(14);
         tvText.setLayoutParams(llParam);
 
         ll.addView(progressBar);

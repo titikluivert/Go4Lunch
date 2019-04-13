@@ -1,6 +1,8 @@
 package com.ngtiofack.go4lunch.controller.fragments;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
@@ -31,6 +33,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.ngtiofack.go4lunch.R;
+import com.ngtiofack.go4lunch.controller.activities.DetailedRestaurantActivity;
 import com.ngtiofack.go4lunch.model.RestaurantsModel;
 import com.ngtiofack.go4lunch.utils.CurrentLocation;
 import com.ngtiofack.go4lunch.utils.RestaurantsServiceStreams;
@@ -43,7 +46,6 @@ import static com.ngtiofack.go4lunch.utils.Utils.TYPE;
 
 public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
 
-
     public static final int MY_PERMISSION_REQUEST_CODE = 11;
     FusedLocationProviderClient mFusedLocationClient;
     double latitude;
@@ -51,7 +53,8 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
     CurrentLocation currentLocation = new CurrentLocation();
     private GoogleMap mMap;
     private View mView;
-    private Marker mCurrLocationMarker;
+    private Marker mCurrLocationMarker, m;
+    OnDataPass dataPasser;
     LocationCallback mLocationCallback = new LocationCallback() {
 
         @Override
@@ -67,7 +70,6 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
                 longitude = location.getLongitude();
 
                 buildRetrofitAndGetResponse(location);
-
             }
         }
     };
@@ -150,7 +152,7 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
         DisposableObserver<RestaurantsModel> disposable = RestaurantsServiceStreams.streamFetchRestaurantsItems(TYPE, latitude + "," + longitude, PROXIMITY_RADIUS).subscribeWith(new DisposableObserver<RestaurantsModel>() {
 
             @Override
-            public void onNext(RestaurantsModel results) {
+            public void onNext(final RestaurantsModel results) {
                 try {
                     mMap.clear();
                     // This loop will go through all the results and add marker on each location.
@@ -158,22 +160,41 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
 
                         double lat = results.getResults().get(i).getGeometry().getLocation().getLat();
                         double lng = results.getResults().get(i).getGeometry().getLocation().getLng();
+
                         String placeName = results.getResults().get(i).getName();
                         String vicinity = results.getResults().get(i).getVicinity();
+                        double rating = results.getResults().get(i).getRating() == null ? 0 : results.getResults().get(i).getRating();
+
+                        String photoRef;
+                        int photoHeight, photoWidth;
+                        if (results.getResults().get(i).getPhotos() != null) {
+                            photoRef = results.getResults().get(i).getPhotos().get(0).getPhotoReference();
+                            photoHeight = results.getResults().get(i).getPhotos().get(0).getHeight();
+                            photoWidth = results.getResults().get(i).getPhotos().get(0).getWidth();
+
+                        } else {
+                            photoRef = "";
+                            photoHeight = 0;
+                            photoWidth = 0;
+                        }
+
                         MarkerOptions markerOptions = new MarkerOptions();
                         LatLng latLng = new LatLng(lat, lng);
                         // Position of Marker on Map
                         markerOptions.position(latLng);
                         // Adding Title to the Marker
                         markerOptions.title(placeName + " : " + vicinity);
-                        // Adding Marker to the Camera.
-                        Marker m = mMap.addMarker(markerOptions);
-                        // Adding colour to the marker
-                        markerOptions.icon(BitmapDescriptorFactory.fromPath(results.getResults().get(i).getIcon()));
+                        markerOptions.snippet(photoRef + ":" + photoHeight + ":" + photoWidth + ":" + rating);
+
+                        // Adding Marker to the Camera. // Adding colour to the marker
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_restaurant_black_24dp));
                         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+
+                        //
+                        passData(true);
                         // move map camera
                         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                        mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+                        mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
 
                         if (i == results.getResults().size() - 1) {
                             //Place current location marker
@@ -181,16 +202,56 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
                             //MarkerOptions markerOptions = new MarkerOptions();
                             markerOptions.position(yourLocation);
                             markerOptions.title("Current Position");
+                            // markerOptions.snippet()
                             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-                            mCurrLocationMarker = mMap.addMarker(markerOptions);
+
                             //move map camera
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(yourLocation, Utils.zoomLevel));
                         }
+
+                        m = mMap.addMarker(markerOptions);
+                        m.setTag(i);
+                        // For simplicity an anonymous marker click listener is specified.
+                        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+
+                            // Return true if the click event is consumed (and therefore no
+                            // info window is displayed) or false to produce default behavior.
+
+                            public boolean onMarkerClick(final Marker marker) {
+                                String[] name_and_address, refPhotoHeightWidth;
+                                Integer clickCount = (Integer) marker.getTag();
+                                String photoUrl;
+                                // Check if a click count was set, then display the click count.
+                                if (clickCount != null) {
+                                    clickCount = clickCount + 1;
+                                    marker.setTag(clickCount);
+                                    name_and_address = marker.getTitle().split(":");
+                                    refPhotoHeightWidth = marker.getSnippet().split(":");
+                                    Intent myIntent = new Intent(getActivity(), DetailedRestaurantActivity.class);
+                                    myIntent.putExtra(getString(R.string.vicinity), name_and_address[1].trim());
+                                    myIntent.putExtra(getString(R.string.name_restaurant), name_and_address[0].trim());
+
+                                    if (refPhotoHeightWidth[0].isEmpty()) {
+                                        photoUrl = "";
+                                    } else {
+                                        photoUrl = refPhotoHeightWidth[0];
+                                        myIntent.putExtra(getString(R.string.photoHeight), refPhotoHeightWidth[1]);
+                                        myIntent.putExtra(getString(R.string.photoWidth), refPhotoHeightWidth[2]);
+                                    }
+                                    myIntent.putExtra(getString(R.string.photosReference), photoUrl);
+                                    myIntent.putExtra(getString(R.string.number_of_stars), Utils.getNumOfStars(Double.parseDouble(refPhotoHeightWidth[3])));
+
+                                    startActivity(myIntent);
+                                }
+                                return true;
+                            }
+                        });
                     }
                 } catch (Exception e) {
                     Log.d("onResponse", "There is an error");
                     e.printStackTrace();
                 }
+
             }
 
             @Override
@@ -211,5 +272,19 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
         super.onPause();
         currentLocation.saveLatLng(mView.getContext(), (float) latitude, (float) longitude);
 
+    }
+
+    public interface OnDataPass {
+        void onDataPass(boolean data);
+    }
+
+    public void passData(boolean data) {
+        dataPasser.onDataPass(data);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        dataPasser = (OnDataPass) context;
     }
 }

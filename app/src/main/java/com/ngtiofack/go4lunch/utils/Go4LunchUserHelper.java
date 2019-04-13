@@ -33,22 +33,6 @@ public class Go4LunchUserHelper {
         return Go4LunchUserHelper.getUsersCollection().document(uid).get();
     }
 
-    public static Task<Void> getUsername(String username, String uid) {
-        return Go4LunchUserHelper.getUsersCollection().document(uid).update("username", username);
-    }
-
-    public static Task<Void> getUrlPicture(String urlPicture, String uid) {
-        return Go4LunchUserHelper.getUsersCollection().document(uid).update("urlPicture", urlPicture);
-    }
-
-    public static Task<Void> getIsConnected(String uid, boolean isConnected) {
-        return Go4LunchUserHelper.getUsersCollection().document(uid).update("isConnected", isConnected);
-    }
-
-    public static Task<Void> getRestaurantSel(String uid, String restaurantSel) {
-        return Go4LunchUserHelper.getUsersCollection().document(uid).update("restaurantSel", restaurantSel);
-    }
-
     // --- UPDATE ---
 
     public static Task<Void> updateUsername(String username, String uid) {
@@ -59,15 +43,13 @@ public class Go4LunchUserHelper {
         return Go4LunchUserHelper.getUsersCollection().document(uid).update("urlPicture", urlPicture);
     }
 
-
-    public static Task<Void> updateisConnected(String uid, boolean isConnected) {
+    public static Task<Void> updateIsConnected(String uid, boolean isConnected) {
         return Go4LunchUserHelper.getUsersCollection().document(uid).update("isConnected", isConnected);
     }
 
-    public static Task<Void> updateRestaurantSel(String uid, String restaurantSel) {
-        return Go4LunchUserHelper.getUsersCollection().document(uid).update("restaurantSel", restaurantSel);
+    public static Task<Void> updateRestaurantSelected(String uid, String restaurantSelected) {
+        return Go4LunchUserHelper.getUsersCollection().document(uid).update("restaurantSelected", restaurantSelected);
     }
-
 
     // --- DELETE ---
 

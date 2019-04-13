@@ -23,15 +23,75 @@
     <string name="list_view">List View</string>
     <string name="workmates">Workmates</string>
     <string name="title_activity_maps">Map</string>
-
+    <string name="info_user_name_not_found">info user name not found</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
     <string name="save_lat__key">pref_key_lat</string>
     <string name="save_Long__key">pref_key_lng</string>
-    <string name="info_email_not_found">info email not found</string>
-    <string name="info_user_name_not_found">info user name not found</string>
-    <string name="title_activity_base">BaseActivity</string>
+    <string name="save_vicinity_key">pref_key_vicinity</string>
+    <string name="save_restaurantName_key">pref_key_restaurantName</string>
+    <string name="save_photoRestaurant_key">pref_key_photoRestaurant</string>
+    <string name="save_rating_key">pref_key_rating</string>
+    <string name="save_photoHeight_key">pref_key_photoHeight</string>
+    <string name="save_photoWidth_key">pref_key_photoWidth</string>
+    <string name="save_photoRef_key">pref_key_photoRef</string>
+    <string name="save_number_of_stars_key">pref_key_number_of_stars</string>
+    <string name="save_uid_key">pref_key_uid</string>
 
+    <string name="info_email_not_found">info email not found</string>
+    <string name="vicinity">vicinity</string>
+    <string name="photosReference">photosReference</string>
+    <string name="name_restaurant">name_restaurant</string>
+    <string name="title_activity_base">BaseActivity</string>
+    <string name="number_of_stars">NumberOfStars</string>
+
+    <string name="photoHeight">photoHeight</string>
+    <string name="photoWidth">photoWidth</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+
+    <string name="pref_title_new_message_notifications">New message notifications</string>
+    <string name="pref_title_vibrate">Vibrate</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="default_gallery_storage">My Videos</string>
+    <string name="title_auto_upload">Auto upload</string>
+    <string name="summary_upload_over_wifi">Upload the videos when wifi is available</string>
+    <string name="title_upload_quality">Upload Quality</string>
+    <string name="summary_upload_video_quality">Specify video quality for uploads</string>
+    <string name="pref_title_notifications">Notifications</string>
+    <string name="summary_choose_ringtone">Choose notification sound</string>
+    <string name="pref_header_about">About</string>
+    <string name="summary_about">We are a team of like-minded people, specialized in development of Android App Development creating new trends across the app space. Glad to Help in anyway!</string>
+    <string name="app_version">3.5</string>
+    <string name="summary_support">Got any queries? We are happy to help!</string>
+    <string name="title_send_feedback">Send Feedback</string>
+    <string name="title_faq">FAQ</string>
+    <string name="summary_faq">View frequently asked questions</string>
+    <string name="url_faq">https://www.androidhive.info/privacy-policy/</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="url_privacy">https://www.androidhive.info/privacy-policy/</string>
+    <string name="title_terms">Terms &amp; Conditions</string>
+    <string name="url_terms">https://www.androidhive.info/terms-of-service/</string>
+    <string name="title_version">Version</string>
+    <string name="choose_email_client">Choose email client</string>
+    <string name="title_gallery_storage">Default Storage</string>
+    <string name="title_new_notification_sound">New message notification</string>
+    <string name="title_vibrate">Vibrate</string>
+    <string name="summary_vibrate">Vibrate on new notification</string>
+    <string name="key_upload_over_wifi">key_upload_over_wifi</string>
+    <string name="key_gallery_name">key_gallery_name</string>
+    <string name="key_upload_quality">key_upload_quality</string>
+    <string name="notifications_new_message">notifications_new_message</string>
+    <string name="key_notifications_new_message_ringtone">key_notifications_new_message_ringtone</string>
+    <string name="key_vibrate">key_vibrate</string>
+    <string name="key_send_feedback">key_send_feedback</string>
 </resources>

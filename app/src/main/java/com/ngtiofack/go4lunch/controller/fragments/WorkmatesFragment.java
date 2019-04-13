@@ -12,6 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.ngtiofack.go4lunch.R;
 import com.ngtiofack.go4lunch.controller.activities.DetailedRestaurantActivity;
 import com.ngtiofack.go4lunch.model.Go4LunchUsers;
@@ -20,13 +25,12 @@ import com.ngtiofack.go4lunch.view.WorkmatesAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class WorkmatesFragment extends Fragment {
-
-
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -37,7 +41,7 @@ public class WorkmatesFragment extends Fragment {
     @BindView(R.id.list_view__swipe_container_workmates)
     SwipeRefreshLayout swipeRefreshLayout;
 
-    private List<Go4LunchUsers> myResultsList;
+    private List<Go4LunchUsers> go4LunchUsersList, go4LunchUsersListFromFirebase;
     private WorkmatesAdapter adapter;
     private Go4LunchUsers response;
 
@@ -46,22 +50,9 @@ public class WorkmatesFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static WorkmatesFragment newInstance(String param1, String param2) {
-        WorkmatesFragment fragment = new WorkmatesFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            //mParam1 = getArguments().getString(ARG_PARAM1);
-            // mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -73,13 +64,8 @@ public class WorkmatesFragment extends Fragment {
         this.configureRecyclerView(); // - 3 Call during UI creation
         // 4 - Configure the SwipeRefreshLayout
         this.configureOnClickRecyclerView();
-
-        if (getArguments() != null) {
-            // mParam1 = getArguments().getString(ARG_PARAM1);
-            //  mParam2 = getArguments().getString(ARG_PARAM2);
-            this.configureSwipeRefreshLayout();
-            //  this.executeHttpRequestWithRetrofitNews(mParam1, mParam2);
-        }
+        this.retrievingAllFirestoreUsers();
+        this.configureSwipeRefreshLayout();
         return view;
     }
 
@@ -87,20 +73,19 @@ public class WorkmatesFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                //  updateUI(mParam1, mParam2);
+                retrievingAllFirestoreUsers();
             }
         });
     }
-
     // -----------------
     // CONFIGURATION
     // -----------------
     // 3 - Configure RecyclerView, Adapter, LayoutManager & glue it together
     private void configureRecyclerView() {
         // 3.1 - Reset list
-        this.myResultsList = new ArrayList<>();
+        this.go4LunchUsersList = new ArrayList<>();
         // 3.2 - Create adapter passing the list of users
-        this.adapter = new WorkmatesAdapter(this.myResultsList, Glide.with(this));
+        this.adapter = new WorkmatesAdapter(this.go4LunchUsersList, Glide.with(this));
         // 3.3 - Attach the adapter to the recyclerview to populate items
         this.recyclerView.setAdapter(this.adapter);
         // 3.4 - Set layout manager to position the items
@@ -116,19 +101,40 @@ public class WorkmatesFragment extends Fragment {
                         response = adapter.getGo4LunchUsersResult(position);
                         //TODO
                         Intent myIntent = new Intent(getActivity(), DetailedRestaurantActivity.class);
+
                         //myIntent.putExtra(getString(R.string.articleUrl), response.getWebUrl());
                         startActivity(myIntent);
                     }
                 });
     }
 
+    private void retrievingAllFirestoreUsers() {
+
+        go4LunchUsersListFromFirebase = new ArrayList<>();
+
+        FirebaseFirestore.getInstance().collection("users").get()
+
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                Go4LunchUsers go4LunchUsers = document.toObject(Go4LunchUsers.class);
+                                go4LunchUsersListFromFirebase.add(go4LunchUsers);
+                            }
+                            updateUI(go4LunchUsersListFromFirebase);
+                        }
+                    }
+                });
+
+    }
 
     private void updateUI(List<Go4LunchUsers> results) {
         // 3 - Stop refreshing and clear actual list of results
         swipeRefreshLayout.setRefreshing(false);
-        myResultsList.clear();
-        myResultsList.addAll(results);
-        adapter.setGo4LunchUsersList(myResultsList);
+        go4LunchUsersList.clear();
+        go4LunchUsersList.addAll(results);
+        adapter.setGo4LunchUsersList(go4LunchUsersList);
     }
 
 

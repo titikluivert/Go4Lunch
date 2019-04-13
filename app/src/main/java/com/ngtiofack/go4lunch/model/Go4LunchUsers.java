@@ -18,12 +18,12 @@ public class Go4LunchUsers {
     public Go4LunchUsers() {
     }
 
-    public Go4LunchUsers(String uid, String username, String urlPicture, boolean isConnected, String restaurantSel) {
+    public Go4LunchUsers(String uid, String username, String urlPicture, boolean isConnected, String restaurantSelected) {
         this.uid = uid;
         this.username = username;
         this.urlPicture = urlPicture;
         this.isConnected = isConnected;
-        this.restaurantSelected = restaurantSel;
+        this.restaurantSelected = restaurantSelected;
     }
 
     // --- GETTERS ---
