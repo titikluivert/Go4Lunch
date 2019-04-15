@@ -1,4 +1,4 @@
-package com.ngtiofack.go4lunch.controller.activities;
+package com.ngtiofack.go4lunch.controler.activities;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -8,12 +8,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
-import android.util.TypedValue;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.ngtiofack.go4lunch.R;
 
 /**
  * A {@link android.preference.PreferenceActivity} which implements and proxies the necessary calls
@@ -110,6 +107,5 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
         }
         return mDelegate;
     }
-
 
 }

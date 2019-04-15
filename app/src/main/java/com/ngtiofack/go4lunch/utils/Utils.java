@@ -84,5 +84,18 @@ public class Utils {
                 sharedPreferences.getInt(ctx.getString(R.string.save_number_of_stars_key), 0));
     }
 
+    public static  void saveUserId (Context context, String uid)
+    {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(context.getString(R.string.save_uid_key), uid);
+        editor.apply();
+    }
+
+
+    public static String getUserId(Context ctx) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return sharedPreferences.getString(ctx.getString(R.string.save_uid_key), "");
+    }
 }
 

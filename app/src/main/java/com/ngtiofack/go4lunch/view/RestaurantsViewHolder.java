@@ -76,7 +76,7 @@ public class RestaurantsViewHolder extends RecyclerView.ViewHolder {
         imgStars1.setVisibility(View.GONE);
         imgStars2.setVisibility(View.GONE);
 
-        firebaseUserSearch(result);
+        firebaseUserAndRestaurant(result);
 
         if (!(result.getRating() == null)) {
 
@@ -131,7 +131,7 @@ public class RestaurantsViewHolder extends RecyclerView.ViewHolder {
     }
 
 
-    private void firebaseUserSearch(final RestaurantsModel.Result result) {
+    private void firebaseUserAndRestaurant(final RestaurantsModel.Result result) {
 
         final int[] users = {0};
         DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("restaurantSelected");
@@ -148,6 +148,8 @@ public class RestaurantsViewHolder extends RecyclerView.ViewHolder {
 
                         Iterable<DataSnapshot> keys2 = key.getChildren();
                         for (DataSnapshot key0 : keys2) {
+
+
                             users[0] = users[0] + 1;
                         }
                         numOfInterested.setText("(" + users[0] + ")");
@@ -157,9 +159,7 @@ public class RestaurantsViewHolder extends RecyclerView.ViewHolder {
                         }
                     }
                     users[0] = 0;
-
                 }
-
             }
 
             @Override

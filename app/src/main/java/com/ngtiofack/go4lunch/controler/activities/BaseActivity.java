@@ -1,4 +1,4 @@
-package com.ngtiofack.go4lunch.controller.activities;
+package com.ngtiofack.go4lunch.controler.activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;

@@ -1,11 +1,10 @@
-package com.ngtiofack.go4lunch.controller.activities;
+package com.ngtiofack.go4lunch.controler.activities;
 
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;

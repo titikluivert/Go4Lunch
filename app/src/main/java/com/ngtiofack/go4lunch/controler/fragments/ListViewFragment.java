@@ -1,4 +1,4 @@
-package com.ngtiofack.go4lunch.controller.fragments;
+package com.ngtiofack.go4lunch.controler.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.ngtiofack.go4lunch.R;
-import com.ngtiofack.go4lunch.controller.activities.DetailedRestaurantActivity;
+import com.ngtiofack.go4lunch.controler.activities.DetailedRestaurantActivity;
 import com.ngtiofack.go4lunch.model.RestaurantsModel;
 import com.ngtiofack.go4lunch.utils.ItemClickSupport;
 import com.ngtiofack.go4lunch.utils.RestaurantsServiceStreams;

@@ -1,4 +1,4 @@
-package com.ngtiofack.go4lunch.controller.fragments;
+package com.ngtiofack.go4lunch.controler.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,7 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.ngtiofack.go4lunch.R;
-import com.ngtiofack.go4lunch.controller.activities.DetailedRestaurantActivity;
+import com.ngtiofack.go4lunch.controler.activities.DetailedRestaurantActivity;
 import com.ngtiofack.go4lunch.model.Go4LunchUsers;
 import com.ngtiofack.go4lunch.utils.ItemClickSupport;
 import com.ngtiofack.go4lunch.view.WorkmatesAdapter;

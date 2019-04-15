@@ -1,4 +1,4 @@
-package com.ngtiofack.go4lunch.controller.fragments;
+package com.ngtiofack.go4lunch.controler.fragments;
 
 import android.Manifest;
 import android.content.Context;
@@ -33,7 +33,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.ngtiofack.go4lunch.R;
-import com.ngtiofack.go4lunch.controller.activities.DetailedRestaurantActivity;
+import com.ngtiofack.go4lunch.controler.activities.DetailedRestaurantActivity;
 import com.ngtiofack.go4lunch.model.RestaurantsModel;
 import com.ngtiofack.go4lunch.utils.CurrentLocation;
 import com.ngtiofack.go4lunch.utils.RestaurantsServiceStreams;

@@ -9,7 +9,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".controller.activities.LoginActivity">
+    tools:context=".controler.activities.LoginActivity">
 
 
     <RelativeLayout

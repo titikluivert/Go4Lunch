@@ -1,4 +1,4 @@
-package com.ngtiofack.go4lunch.controller.activities;
+package com.ngtiofack.go4lunch.controler.activities;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -60,6 +60,10 @@ public class DetailedRestaurantActivity extends BaseActivity {
         setContentView(R.layout.activity_detailed_restaurant);
         glide = Glide.with(this);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+
+       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(getResources().getColor(android.R.color.transparent));
+        }*/
         mUserDatabase = FirebaseDatabase.getInstance().getReference("restaurantSelected");
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mResultList = findViewById(R.id.list_workmates_recycler_view);
@@ -257,4 +261,6 @@ public class DetailedRestaurantActivity extends BaseActivity {
         });
 
     }
+
+
 }

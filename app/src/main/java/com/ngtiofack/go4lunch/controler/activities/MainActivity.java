@@ -1,4 +1,4 @@
-package com.ngtiofack.go4lunch.controller.activities;
+package com.ngtiofack.go4lunch.controler.activities;
 
 
 import android.content.Intent;
@@ -27,9 +27,9 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.jgabrielfreitas.core.BlurImageView;
 import com.ngtiofack.go4lunch.R;
-import com.ngtiofack.go4lunch.controller.fragments.ListViewFragment;
-import com.ngtiofack.go4lunch.controller.fragments.MapsViewFragment;
-import com.ngtiofack.go4lunch.controller.fragments.WorkmatesFragment;
+import com.ngtiofack.go4lunch.controler.fragments.ListViewFragment;
+import com.ngtiofack.go4lunch.controler.fragments.MapsViewFragment;
+import com.ngtiofack.go4lunch.controler.fragments.WorkmatesFragment;
 import com.ngtiofack.go4lunch.model.YourLunch;
 import com.ngtiofack.go4lunch.utils.CurrentLocation;
 import com.ngtiofack.go4lunch.utils.Go4LunchUserHelper;
@@ -39,6 +39,7 @@ import java.util.Objects;
 
 import static com.ngtiofack.go4lunch.utils.Utils.RESTAURANTISNOTSELECTED;
 import static com.ngtiofack.go4lunch.utils.Utils.getYourLunch;
+import static com.ngtiofack.go4lunch.utils.Utils.saveUserId;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, MapsViewFragment.OnDataPass {
 
@@ -69,7 +70,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    getSupportActionBar().setTitle("I',m Hungry!");
+                    getSupportActionBar().setTitle("I'm Hungry!");
                     selectedFragment = new MapsViewFragment();
                     break;
                 case R.id.navigation_dashboard:
@@ -296,6 +297,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onPause() {
         super.onPause();
-        //saveUserID(this, this.getCurrentUser().getUid());
+        saveUserId(this, this.getCurrentUser().getUid());
     }
 }
