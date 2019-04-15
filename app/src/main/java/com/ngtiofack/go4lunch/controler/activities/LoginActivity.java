@@ -25,7 +25,8 @@ public class LoginActivity extends BaseActivity {
 
     // Choose authentication providers
     private List<AuthUI.IdpConfig> providers = Arrays.asList(
-            new AuthUI.IdpConfig.GoogleBuilder().build()// SUPPORT GOOGLE
+            new AuthUI.IdpConfig.GoogleBuilder().build(), // GOOGLE
+             new AuthUI.IdpConfig.FacebookBuilder().build() // FACEBOOK
     );
 
     @Override
@@ -48,7 +49,7 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 // 3 - Launch Sign-In Activity when user clicked on Login Button
-                showProgress("Signing in...");
+                startSignInActivity();
 
             }
         });
@@ -65,7 +66,7 @@ public class LoginActivity extends BaseActivity {
         startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
-                        .setAvailableProviders(providers) // SUPPORT GOOGLE
+                        .setAvailableProviders(providers) // SUPPORT GOOGLE AND FACEBOOK
                         .setIsSmartLockEnabled(false, true)
                         .build(),
                 RC_SIGN_IN);

@@ -3,6 +3,7 @@ package com.ngtiofack.go4lunch.utils;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -48,7 +49,25 @@ public class SyncJob extends Job {
             Objects.requireNonNull(getContext().getSystemService(NotificationManager.class)).createNotificationChannel(channel);
         }
 
+      /*  NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.notification_icon)
+                .setContentTitle("Event tracker")
+                .setContentText("Events received");
+        NotificationCompat.InboxStyle inboxStyle =
+                new NotificationCompat.InboxStyle();
+
+        String[] events = {"line 1","line 2","line 3","line 4","line 5","line 6"};
+// Sets a title for the Inbox in expanded layout
+        inboxStyle.setBigContentTitle("Event tracker details:");
+// Moves events into the expanded layout
+        for (int i=0; i < events.length; i++) {
+            inboxStyle.addLine(events[i]);
+        }
+// Moves the expanded layout object into the notification object.
+        mBuilder.setStyle(inboxStyle);*/
+
         /**
+         *
          * Il rappellera à l'utilisateur le nom du restaurant qu'il a choisi, l'adresse, ainsi que la liste des collègues qui viendront avec lui.
          */
         mYourLunch = getYourLunch(getContext());
@@ -56,21 +75,18 @@ public class SyncJob extends Job {
 
         Notification notification = new NotificationCompat.Builder(getContext(), TAG)
                 .setContentTitle("New notifications")
-                .setContentText("Tester un peu")
+                .setContentText("Info for Lunch")
                 .setStyle(new NotificationCompat.InboxStyle()
                         .addLine("Name : " + mYourLunch.getName())
                         .addLine("Address : " + mYourLunch.getVicinity())
-                        .addLine(nameOfColleagueForLunch.get(0))
-                        .addLine("This is line 4")
-                        .addLine("This is line 5")
-                        .addLine("This is line 6")
-                        .addLine("This is line 7")
+                        .addLine("")
+                        .addLine("Colleagues which come: "+nameOfColleagueForLunch.get(0))
                         .setBigContentTitle("Restaurant for Lunch today")
-                        .setSummaryText("Info for Lunch"))
+                        .setSummaryText("Reminder"))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .setSmallIcon(R.drawable.ic_notifications_active_black_24dp)
-                .setColor(getContext().getColor(R.color.colorGoogle))
+                .setColor(Color.BLUE)
                 .setAutoCancel(true)
                 .build();
 
