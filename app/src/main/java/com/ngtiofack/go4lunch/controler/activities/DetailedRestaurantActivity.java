@@ -26,14 +26,14 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.ngtiofack.go4lunch.R;
 import com.ngtiofack.go4lunch.model.RestaurantSelected;
-import com.ngtiofack.go4lunch.utils.Utils;
+import com.ngtiofack.go4lunch.utils.mainUtils;
 
 import java.util.Objects;
 
-import static com.ngtiofack.go4lunch.utils.Go4LunchUserHelper.getUser;
-import static com.ngtiofack.go4lunch.utils.Go4LunchUserHelper.updateRestaurantSelected;
-import static com.ngtiofack.go4lunch.utils.Utils.RESTAURANTISNOTSELECTED;
-import static com.ngtiofack.go4lunch.utils.Utils.saveYourLunch;
+import static com.ngtiofack.go4lunch.api.Go4LunchUserHelper.getUser;
+import static com.ngtiofack.go4lunch.api.Go4LunchUserHelper.updateRestaurantSelected;
+import static com.ngtiofack.go4lunch.utils.mainUtils.RESTAURANTISNOTSELECTED;
+import static com.ngtiofack.go4lunch.utils.mainUtils.saveYourLunch;
 
 public class DetailedRestaurantActivity extends BaseActivity {
 
@@ -121,7 +121,7 @@ public class DetailedRestaurantActivity extends BaseActivity {
             photoHeight = getIntent().getIntExtra(getString(R.string.photoHeight), 1000);
             photoWidth = getIntent().getIntExtra(getString(R.string.photoWidth), 1000);
 
-            glide.load(Utils.getPhotoUrl(this, photoReferenceUrl, photoHeight, photoWidth)).apply(RequestOptions.centerInsideTransform()).into(imgRestaurantDetails);
+            glide.load(mainUtils.getPhotoUrl(this, photoReferenceUrl, photoHeight, photoWidth)).apply(RequestOptions.centerInsideTransform()).into(imgRestaurantDetails);
         } else {
 
             glide.load(R.drawable.restaurant_default_img).apply(RequestOptions.centerInsideTransform()).into(imgRestaurantDetails);
@@ -261,6 +261,5 @@ public class DetailedRestaurantActivity extends BaseActivity {
         });
 
     }
-
 
 }

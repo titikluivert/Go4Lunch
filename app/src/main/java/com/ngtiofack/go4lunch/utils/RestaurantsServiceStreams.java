@@ -2,7 +2,7 @@ package com.ngtiofack.go4lunch.utils;
 
 
 import com.ngtiofack.go4lunch.model.RestaurantsModel;
-import com.ngtiofack.go4lunch.utils.services.RetrofitMapsServices;
+import com.ngtiofack.go4lunch.services.RetrofitMapsServices;
 
 import java.util.concurrent.TimeUnit;
 

@@ -1,4 +1,4 @@
-package com.ngtiofack.go4lunch.utils;
+package com.ngtiofack.go4lunch.api;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;

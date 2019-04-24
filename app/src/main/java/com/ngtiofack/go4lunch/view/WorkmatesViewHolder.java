@@ -8,15 +8,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.ngtiofack.go4lunch.R;
 import com.ngtiofack.go4lunch.model.Go4LunchUsers;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static com.ngtiofack.go4lunch.utils.Go4LunchUserHelper.getUser;
 
 /**
  * Created by NG-TIOFACK on 2/16/2019.
@@ -46,6 +42,8 @@ public class WorkmatesViewHolder extends RecyclerView.ViewHolder {
         } else {
             openHours = " hasn't decided yet";
         }
+
+        //ContextCompat.getColor(this, R.color.colorPrimary))
 
         if(!restaurantChoosed) {
             this.user_and_menuRestaurant.setText(result.getUsername() + " " + openHours);

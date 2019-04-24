@@ -24,10 +24,10 @@ public class LoginActivity extends BaseActivity {
     //FOR DESIGN
 
     // Choose authentication providers
-    private List<AuthUI.IdpConfig> providers = Arrays.asList(
+   /* private List<AuthUI.IdpConfig> providers = Arrays.asList(
             new AuthUI.IdpConfig.GoogleBuilder().build(), // GOOGLE
              new AuthUI.IdpConfig.FacebookBuilder().build() // FACEBOOK
-    );
+    );*/
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,7 +40,7 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 // 3 - Launch Sign-In Activity when user clicked on Login Button
-                startSignInActivity();
+                startSignInActivity(new AuthUI.IdpConfig.GoogleBuilder().build());
             }
         });
 
@@ -49,7 +49,7 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 // 3 - Launch Sign-In Activity when user clicked on Login Button
-                startSignInActivity();
+                startSignInActivity(new AuthUI.IdpConfig.FacebookBuilder().build());
 
             }
         });
@@ -62,11 +62,11 @@ public class LoginActivity extends BaseActivity {
 
     }
 
-    private void startSignInActivity() {
+    private void startSignInActivity(AuthUI.IdpConfig providers) {
         startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
-                        .setAvailableProviders(providers) // SUPPORT GOOGLE AND FACEBOOK
+                        .setAvailableProviders(Arrays.asList(providers)) // SUPPORT GOOGLE AND FACEBOOK
                         .setIsSmartLockEnabled(false, true)
                         .build(),
                 RC_SIGN_IN);

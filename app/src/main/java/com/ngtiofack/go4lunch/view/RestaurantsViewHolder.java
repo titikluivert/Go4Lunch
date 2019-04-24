@@ -16,13 +16,13 @@ import com.google.firebase.database.ValueEventListener;
 import com.ngtiofack.go4lunch.R;
 import com.ngtiofack.go4lunch.model.RestaurantsModel;
 import com.ngtiofack.go4lunch.utils.CurrentLocation;
-import com.ngtiofack.go4lunch.utils.SaveCurrentLocation;
-import com.ngtiofack.go4lunch.utils.Utils;
+import com.ngtiofack.go4lunch.model.SaveCurrentLocation;
+import com.ngtiofack.go4lunch.utils.mainUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.ngtiofack.go4lunch.utils.Utils.getNumOfStars;
+import static com.ngtiofack.go4lunch.utils.mainUtils.getNumOfStars;
 
 /**
  * Created by NG-TIOFACK on 12/19/2018.
@@ -103,12 +103,12 @@ public class RestaurantsViewHolder extends RecyclerView.ViewHolder {
         }
 
         this.Title.setText(result.getName());
-        this.distanceOfRestaurant.setText(String.valueOf(Utils.getDistanceToRestaurants(
+        this.distanceOfRestaurant.setText(mainUtils.getDistanceToRestaurants(
                 Double.parseDouble(result.getGeometry().getLocation().getLat().toString().replaceAll(" ", ".")),
                 Double.parseDouble(result.getGeometry().getLocation().getLng().toString().replaceAll(" ", ".")),
                 (double) LatLng.getLatitude(),
                 (double) LatLng.getLongitude()
-        )) + "m");
+        ) + "m");
 
         this.addressRestaurant.setText(result.getVicinity());
         String openHours = "Not available";
@@ -122,7 +122,7 @@ public class RestaurantsViewHolder extends RecyclerView.ViewHolder {
         this.closeTime.setText(openHours);
 
         if (result.getPhotos() != null) {
-            String photoUrl = Utils.getPhotoUrl(this.closeTime.getContext(), result.getPhotos().get(0).getPhotoReference(), result.getPhotos().get(0).getHeight(), result.getPhotos().get(0).getWidth());
+            String photoUrl = mainUtils.getPhotoUrl(this.closeTime.getContext(), result.getPhotos().get(0).getPhotoReference(), result.getPhotos().get(0).getHeight(), result.getPhotos().get(0).getWidth());
             glide.load(photoUrl).apply(RequestOptions.circleCropTransform()).into(imageView);
 
         } else {

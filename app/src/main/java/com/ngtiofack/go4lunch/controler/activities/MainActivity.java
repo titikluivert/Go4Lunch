@@ -32,14 +32,14 @@ import com.ngtiofack.go4lunch.controler.fragments.MapsViewFragment;
 import com.ngtiofack.go4lunch.controler.fragments.WorkmatesFragment;
 import com.ngtiofack.go4lunch.model.YourLunch;
 import com.ngtiofack.go4lunch.utils.CurrentLocation;
-import com.ngtiofack.go4lunch.utils.Go4LunchUserHelper;
-import com.ngtiofack.go4lunch.utils.SaveCurrentLocation;
+import com.ngtiofack.go4lunch.api.Go4LunchUserHelper;
+import com.ngtiofack.go4lunch.model.SaveCurrentLocation;
 
 import java.util.Objects;
 
-import static com.ngtiofack.go4lunch.utils.Utils.RESTAURANTISNOTSELECTED;
-import static com.ngtiofack.go4lunch.utils.Utils.getYourLunch;
-import static com.ngtiofack.go4lunch.utils.Utils.saveUserId;
+import static com.ngtiofack.go4lunch.utils.mainUtils.RESTAURANTISNOTSELECTED;
+import static com.ngtiofack.go4lunch.utils.mainUtils.getYourLunch;
+import static com.ngtiofack.go4lunch.utils.mainUtils.saveUserId;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, MapsViewFragment.OnDataPass {
 

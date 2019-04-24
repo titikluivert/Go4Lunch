@@ -1,8 +1,8 @@
-package com.ngtiofack.go4lunch.utils.services;
+package com.ngtiofack.go4lunch.services;
 
 
 import com.ngtiofack.go4lunch.model.RestaurantsModel;
-import com.ngtiofack.go4lunch.utils.Utils;
+import com.ngtiofack.go4lunch.utils.mainUtils;
 
 import io.reactivex.Observable;
 import retrofit2.Retrofit;
@@ -27,7 +27,7 @@ public interface RetrofitMapsServices {
 
 
     Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(Utils.url)
+            .baseUrl(mainUtils.url)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build();

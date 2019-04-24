@@ -18,7 +18,7 @@ import com.ngtiofack.go4lunch.controler.activities.DetailedRestaurantActivity;
 import com.ngtiofack.go4lunch.model.RestaurantsModel;
 import com.ngtiofack.go4lunch.utils.ItemClickSupport;
 import com.ngtiofack.go4lunch.utils.RestaurantsServiceStreams;
-import com.ngtiofack.go4lunch.utils.Utils;
+import com.ngtiofack.go4lunch.utils.mainUtils;
 import com.ngtiofack.go4lunch.view.RestaurantsAdapter;
 
 import java.util.ArrayList;
@@ -29,8 +29,8 @@ import butterknife.ButterKnife;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 
-import static com.ngtiofack.go4lunch.utils.Utils.PROXIMITY_RADIUS;
-import static com.ngtiofack.go4lunch.utils.Utils.TYPE;
+import static com.ngtiofack.go4lunch.utils.mainUtils.PROXIMITY_RADIUS;
+import static com.ngtiofack.go4lunch.utils.mainUtils.TYPE;
 
 public class ListViewFragment extends Fragment {
 
@@ -143,7 +143,7 @@ public class ListViewFragment extends Fragment {
                             myIntent.putExtra(getString(R.string.photoWidth), response.getPhotos().get(0).getWidth());
                         }
                         myIntent.putExtra(getString(R.string.photosReference), photoUrl);
-                        myIntent.putExtra(getString(R.string.number_of_stars), response.getRating() == null ? 0 : Utils.getNumOfStars(response.getRating()));
+                        myIntent.putExtra(getString(R.string.number_of_stars), response.getRating() == null ? 0 : mainUtils.getNumOfStars(response.getRating()));
                         //myIntent.putExtra(getString(R.string.articleUrl), response.getWebUrl());
                         startActivity(myIntent);
                     }

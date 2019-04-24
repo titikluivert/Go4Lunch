@@ -15,7 +15,7 @@ import java.util.List;
  */
 
 
-public class Utils {
+public class mainUtils {
 
     public static final float zoomLevel = 15; //This goes up to 21
     public static final String url = "https://maps.googleapis.com/maps/";
@@ -23,6 +23,8 @@ public class Utils {
     public static final String TYPE = "restaurant";
 
     public static final String RESTAURANTISNOTSELECTED = "No restaurant is selected";
+
+    public static final String COLLECTION_NAME = "messages";
 
 
     public static int getDistanceToRestaurants(double latA, double longA, double latB, double longB) {
@@ -96,6 +98,53 @@ public class Utils {
     public static String getUserId(Context ctx) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
         return sharedPreferences.getString(ctx.getString(R.string.save_uid_key), "");
+    }
+
+
+
+    public static long convertHexToDecimal(String hexReceiverId, String hexSenderId){
+
+        StringBuilder sb = new StringBuilder();
+        int decimal2 = 0,  decimal = 0;
+
+        String hex = convertStringToHex(hexReceiverId);
+        String hex2 = convertStringToHex(hexSenderId);
+        //49204c6f7665204a617661 split into two characters 49, 20, 4c...
+        for( int i=0; i<hex.length()-1; i+=2 ){
+
+            //grab the hex in pairs
+            String output = hex.substring(i, (i + 2));
+            //convert hex to decimal
+             int temp = Integer.parseInt(output, 16);
+            //convert the decimal to character
+             decimal = decimal + temp;
+        }
+
+        //49204c6f7665204a617661 split into two characters 49, 20, 4c...
+        for( int i=0; i<hex2.length()-1; i+=2 ){
+
+            //grab the hex in pairs
+            String output = hex2.substring(i, (i + 2));
+            //convert hex to decimal
+             int temp = Integer.parseInt(output, 16);
+            //convert the decimal to character
+            decimal2 = decimal2 + temp;
+        }
+
+        return (long)(decimal + decimal2);
+    }
+
+
+    private static  String convertStringToHex(String str){
+
+        char[] chars = str.toCharArray();
+
+        StringBuffer hex = new StringBuffer();
+        for(int i = 0; i < chars.length; i++){
+            hex.append(Integer.toHexString((int)chars[i]));
+        }
+
+        return hex.toString();
     }
 }
 

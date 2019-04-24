@@ -18,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.ngtiofack.go4lunch.R;
+import com.ngtiofack.go4lunch.controler.activities.ChatsActivity;
 import com.ngtiofack.go4lunch.controler.activities.DetailedRestaurantActivity;
 import com.ngtiofack.go4lunch.model.Go4LunchUsers;
 import com.ngtiofack.go4lunch.utils.ItemClickSupport;
@@ -29,6 +30,8 @@ import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.ngtiofack.go4lunch.utils.mainUtils.getUserId;
 
 public class WorkmatesFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -100,10 +103,16 @@ public class WorkmatesFragment extends Fragment {
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                         response = adapter.getGo4LunchUsersResult(position);
                         //TODO
-                        Intent myIntent = new Intent(getActivity(), DetailedRestaurantActivity.class);
+                        // 2 - Check if user is connected before launching MentorActivity
+                        if (response.getIsConnected()){
+                            startChatsActivity();
+                        } else {
+                           // showSnackBar(this.coordinatorLayout, getString(R.string.error_not_connected));
+                        }
+                       /* Intent myIntent = new Intent(getActivity(), DetailedRestaurantActivity.class);
 
                         //myIntent.putExtra(getString(R.string.articleUrl), response.getWebUrl());
-                        startActivity(myIntent);
+                        startActivity(myIntent);*/
                     }
                 });
     }
@@ -120,7 +129,9 @@ public class WorkmatesFragment extends Fragment {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 Go4LunchUsers go4LunchUsers = document.toObject(Go4LunchUsers.class);
-                                go4LunchUsersListFromFirebase.add(go4LunchUsers);
+                                if(!go4LunchUsers.getUid().equals(getUserId(getContext()))){
+                                        go4LunchUsersListFromFirebase.add(go4LunchUsers);
+                                }
                             }
                             updateUI(go4LunchUsersListFromFirebase);
                         }
@@ -137,5 +148,13 @@ public class WorkmatesFragment extends Fragment {
         adapter.setGo4LunchUsersList(go4LunchUsersList);
     }
 
+
+    // 1 - Starting Mentor Activity
+    private void startChatsActivity(){
+        Intent intent = new Intent(getContext(), ChatsActivity.class);
+        intent.putExtra(getString(R.string.receiverId), response.getUid());
+        intent.putExtra(getString(R.string.name_chat_person), response.getUsername());
+        startActivity(intent);
+    }
 
 }

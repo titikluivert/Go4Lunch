@@ -37,12 +37,12 @@ import com.ngtiofack.go4lunch.controler.activities.DetailedRestaurantActivity;
 import com.ngtiofack.go4lunch.model.RestaurantsModel;
 import com.ngtiofack.go4lunch.utils.CurrentLocation;
 import com.ngtiofack.go4lunch.utils.RestaurantsServiceStreams;
-import com.ngtiofack.go4lunch.utils.Utils;
+import com.ngtiofack.go4lunch.utils.mainUtils;
 
 import io.reactivex.observers.DisposableObserver;
 
-import static com.ngtiofack.go4lunch.utils.Utils.PROXIMITY_RADIUS;
-import static com.ngtiofack.go4lunch.utils.Utils.TYPE;
+import static com.ngtiofack.go4lunch.utils.mainUtils.PROXIMITY_RADIUS;
+import static com.ngtiofack.go4lunch.utils.mainUtils.TYPE;
 
 public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
 
@@ -206,7 +206,7 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
                             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
 
                             //move map camera
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(yourLocation, Utils.zoomLevel));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(yourLocation, mainUtils.zoomLevel));
                         }
 
                         m = mMap.addMarker(markerOptions);
@@ -239,7 +239,7 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
                                         myIntent.putExtra(getString(R.string.photoWidth), refPhotoHeightWidth[2]);
                                     }
                                     myIntent.putExtra(getString(R.string.photosReference), photoUrl);
-                                    myIntent.putExtra(getString(R.string.number_of_stars), Utils.getNumOfStars(Double.parseDouble(refPhotoHeightWidth[3])));
+                                    myIntent.putExtra(getString(R.string.number_of_stars), mainUtils.getNumOfStars(Double.parseDouble(refPhotoHeightWidth[3])));
 
                                     startActivity(myIntent);
                                 }

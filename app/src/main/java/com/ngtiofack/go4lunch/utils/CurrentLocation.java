@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.ngtiofack.go4lunch.R;
+import com.ngtiofack.go4lunch.model.SaveCurrentLocation;
 
 public class CurrentLocation {
 

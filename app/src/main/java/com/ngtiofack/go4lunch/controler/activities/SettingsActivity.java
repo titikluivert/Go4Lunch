@@ -1,14 +1,9 @@
 package com.ngtiofack.go4lunch.controler.activities;
 
-
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
@@ -22,18 +17,12 @@ import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 
-import com.evernote.android.job.DailyJob;
-import com.evernote.android.job.JobManager;
-import com.evernote.android.job.JobRequest;
 import com.ngtiofack.go4lunch.R;
-import com.ngtiofack.go4lunch.utils.SyncJob;
-
-import java.util.concurrent.TimeUnit;
 
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
-    private static final String TAG = SettingsActivity.class.getSimpleName();
-    private static int jobId = 0;
+    //private static final String TAG = SettingsActivity.class.getSimpleName();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,27 +128,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
     };
 
-    public int scheduleDailyJob() {
-        // schedule between 12 and 12 AM
-        return DailyJob.schedule(new JobRequest.Builder(SyncJob.TAG)
-                        .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
-                , TimeUnit.HOURS.toMillis(12), TimeUnit.HOURS.toMillis(12));
-    }
-
-    private void cancelJob(int jobId) {
-        JobManager.instance().cancel(jobId);
-    }
 
     @Override
     public void onPause() {
         super.onPause();
         SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean notificationsIsEnabled = myPrefs.getBoolean(getString(R.string.notifications_new_message), true);
-        if(notificationsIsEnabled){
-            jobId = scheduleDailyJob();
-        }else{
-            cancelJob(jobId);
-        }
     }
 
 

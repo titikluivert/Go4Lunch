@@ -11,4 +11,10 @@
     <color name="colorNavDrawer">#FF8A50</color>
     <color name="colorGrey">#D2D2D2</color>
 
+
+    <color name="colorGreen">#6BB18C</color>
+    <color name="colorSandLight">#ECDAAF</color>
+    <color name="colorSand">#EBCB94</color>
+    <color name="colorError">#FF5252</color>
+
 </resources>
