@@ -1,6 +1,6 @@
 package com.ngtiofack.go4lunch.view;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -31,7 +31,6 @@ public class ChatAdapter extends FirestoreRecyclerAdapter<Message, MessageViewHo
         this.idCurrentUser = idCurrentUser;
         this.uIdBetween2Chats = uIdBetween2Chats;
     }
-
 
     @Override
     protected void onBindViewHolder(@NonNull MessageViewHolder holder, int position, @NonNull Message model) {

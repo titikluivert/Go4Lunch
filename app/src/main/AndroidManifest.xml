@@ -22,14 +22,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".controler.activities.ChatsActivity"
-            android:label="@string/toolbar_title_mentor_chat_activity"
-            android:parentActivityName=".controler.activities.MainActivity"/>
-
-
         <activity
             android:name=".controler.activities.SettingsActivity"
-            android:label="@string/title_activity_settings"/>
+            android:parentActivityName=".controler.activities.MainActivity"
+            android:label="@string/title_activity_settings2"/>
+        <activity
+            android:name=".controler.activities.ChatsActivity"
+            android:label="@string/toolbar_title_mentor_chat_activity"
+            android:parentActivityName=".controler.activities.MainActivity" />
         <activity
             android:name=".controler.activities.DetailedRestaurantActivity"
             android:screenOrientation="portrait" />

@@ -2,10 +2,10 @@ package com.ngtiofack.go4lunch.controler.activities;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -33,6 +33,7 @@ import java.util.Objects;
 import static com.ngtiofack.go4lunch.api.Go4LunchUserHelper.getUser;
 import static com.ngtiofack.go4lunch.api.Go4LunchUserHelper.updateRestaurantSelected;
 import static com.ngtiofack.go4lunch.utils.mainUtils.RESTAURANTISNOTSELECTED;
+import static com.ngtiofack.go4lunch.utils.mainUtils.saveRestaurantSelected;
 import static com.ngtiofack.go4lunch.utils.mainUtils.saveYourLunch;
 
 public class DetailedRestaurantActivity extends BaseActivity {
@@ -59,11 +60,8 @@ public class DetailedRestaurantActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detailed_restaurant);
         glide = Glide.with(this);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
-       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(getResources().getColor(android.R.color.transparent));
-        }*/
         mUserDatabase = FirebaseDatabase.getInstance().getReference("restaurantSelected");
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mResultList = findViewById(R.id.list_workmates_recycler_view);
@@ -164,6 +162,7 @@ public class DetailedRestaurantActivity extends BaseActivity {
                     fab.setImageResource(R.drawable.please_select_restaurant);
                     deleteNewUser();
                 }
+                saveRestaurantSelected(getApplicationContext(), nameRestaurant);
             }
         });
 

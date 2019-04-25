@@ -39,6 +39,8 @@
     <string name="save_photoRef_key">pref_key_photoRef</string>
     <string name="save_number_of_stars_key">pref_key_number_of_stars</string>
     <string name="save_uid_key">pref_key_uid</string>
+    <string name="save_restaurantSelected_key">pref_restaurantSelected_uid</string>
+
 
     <string name="info_email_not_found">info email not found</string>
     <string name="vicinity">vicinity</string>
@@ -108,6 +110,22 @@
     <string name="text_view_mentor_chat_error">Ce fil de discussion ne contient pour le moment aucun message&#8230;</string>
     <string name="popup_title_permission_files_access">Cette application a besoin de permission pour fonctionner.</string>
     <string name="toast_title_no_image_chosen">Aucune image choisie&#8230;</string>
-    <string name= "receiverId">key_receiverId</string>
+    <string name="receiverId">key_receiverId</string>
     <string name="name_chat_person">key_nameChatPerson</string>
+    <string name="title_activity_settings2">Settings</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 </resources>

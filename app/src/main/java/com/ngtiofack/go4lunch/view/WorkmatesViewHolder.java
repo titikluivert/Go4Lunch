@@ -2,7 +2,8 @@ package com.ngtiofack.go4lunch.view;
 
 import android.annotation.SuppressLint;
 import android.graphics.Typeface;
-import android.support.v7.widget.RecyclerView;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -47,7 +48,7 @@ public class WorkmatesViewHolder extends RecyclerView.ViewHolder {
 
         if(!restaurantChoosed) {
             this.user_and_menuRestaurant.setText(result.getUsername() + " " + openHours);
-            this.user_and_menuRestaurant.setTextColor(this.user_and_menuRestaurant.getResources().getColor(R.color.colorGrey));
+            this.user_and_menuRestaurant.setTextColor(ContextCompat.getColor(this.imageView.getContext(),R.color.colorGrey));
             this.user_and_menuRestaurant.setTypeface(null, Typeface.ITALIC);
         }
         else{

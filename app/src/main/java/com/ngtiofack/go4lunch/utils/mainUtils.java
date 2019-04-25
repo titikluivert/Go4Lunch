@@ -5,10 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.ngtiofack.go4lunch.R;
-import com.ngtiofack.go4lunch.model.RestaurantsModel;
 import com.ngtiofack.go4lunch.model.YourLunch;
-
-import java.util.List;
 
 /**
  * Created by NG-TIOFACK on 2/13/2019.
@@ -23,7 +20,6 @@ public class mainUtils {
     public static final String TYPE = "restaurant";
 
     public static final String RESTAURANTISNOTSELECTED = "No restaurant is selected";
-
     public static final String COLLECTION_NAME = "messages";
 
 
@@ -86,25 +82,32 @@ public class mainUtils {
                 sharedPreferences.getInt(ctx.getString(R.string.save_number_of_stars_key), 0));
     }
 
-    public static  void saveUserId (Context context, String uid)
-    {
+    public static  void saveUserId (Context context, String uid) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(context.getString(R.string.save_uid_key), uid);
         editor.apply();
     }
 
-
     public static String getUserId(Context ctx) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
         return sharedPreferences.getString(ctx.getString(R.string.save_uid_key), "");
     }
 
+    public static  void saveRestaurantSelected (Context context, String restaurantSelected ) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(context.getString(R.string.save_restaurantSelected_key), restaurantSelected);
+        editor.apply();
+    }
 
+    public static String getRestaurantSelected(Context ctx) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return sharedPreferences.getString(ctx.getString(R.string.save_restaurantSelected_key), "");
+    }
 
     public static long convertHexToDecimal(String hexReceiverId, String hexSenderId){
 
-        StringBuilder sb = new StringBuilder();
         int decimal2 = 0,  decimal = 0;
 
         String hex = convertStringToHex(hexReceiverId);
@@ -134,14 +137,13 @@ public class mainUtils {
         return (long)(decimal + decimal2);
     }
 
-
     private static  String convertStringToHex(String str){
 
         char[] chars = str.toCharArray();
 
-        StringBuffer hex = new StringBuffer();
-        for(int i = 0; i < chars.length; i++){
-            hex.append(Integer.toHexString((int)chars[i]));
+        StringBuilder hex = new StringBuilder();
+        for (char aChar : chars) {
+            hex.append(Integer.toHexString((int) aChar));
         }
 
         return hex.toString();

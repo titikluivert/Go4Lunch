@@ -3,31 +3,26 @@ package com.ngtiofack.go4lunch.controler.activities;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
+import com.google.android.material.snackbar.Snackbar;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.RelativeLayout;
+
+import androidx.core.content.ContextCompat;
+
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.jgabrielfreitas.core.BlurImageView;
 import com.ngtiofack.go4lunch.R;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 public class LoginActivity extends BaseActivity {
 
     // 1 - Identifier for Sign-In Activity
     private static final int RC_SIGN_IN = 123;
-    // User info
-
-    //FOR DESIGN
-
-    // Choose authentication providers
-   /* private List<AuthUI.IdpConfig> providers = Arrays.asList(
-            new AuthUI.IdpConfig.GoogleBuilder().build(), // GOOGLE
-             new AuthUI.IdpConfig.FacebookBuilder().build() // FACEBOOK
-    );*/
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,28 +31,33 @@ public class LoginActivity extends BaseActivity {
 
 
         RelativeLayout mButton_login = findViewById(R.id.relative_google);
-        mButton_login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 3 - Launch Sign-In Activity when user clicked on Login Button
-                startSignInActivity(new AuthUI.IdpConfig.GoogleBuilder().build());
-            }
+        mButton_login.setOnClickListener(v -> {
+            // 3 - Launch Sign-In Activity when user clicked on Login Button
+            startSignInActivity(new AuthUI.IdpConfig.GoogleBuilder().build());
         });
 
         RelativeLayout mButton_login_fcb = findViewById(R.id.relative_fcb);
-        mButton_login_fcb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 3 - Launch Sign-In Activity when user clicked on Login Button
-                startSignInActivity(new AuthUI.IdpConfig.FacebookBuilder().build());
-
-            }
+        mButton_login_fcb.setOnClickListener(v -> {
+            // 3 - Launch Sign-In Activity when user clicked on Login Button
+            startSignInActivity(new AuthUI.IdpConfig.FacebookBuilder().build());
         });
         BlurImageView blurImageView = findViewById(R.id.BlurImageView);
         blurImageView.setBlur(5);
 
+// clear FLAG_TRANSLUCENT_STATUS flag:
+        //getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Window w = getWindow();
+            w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        }*/
+// finally change the color
+       // getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(getResources() .getColor(android.R.color.transparent));
+        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            getWindow().setStatusBarColor(ContextCompat.getColor(this,android.R.color.darker_gray));
         }
 
     }

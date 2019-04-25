@@ -1,15 +1,14 @@
 package com.ngtiofack.go4lunch.view;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.RequestManager;
 import com.ngtiofack.go4lunch.R;
-import com.ngtiofack.go4lunch.model.Go4LunchUsers;
 import com.ngtiofack.go4lunch.model.RestaurantsModel;
 
 import java.util.List;

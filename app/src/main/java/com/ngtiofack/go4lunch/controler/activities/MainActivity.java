@@ -3,15 +3,14 @@ package com.ngtiofack.go4lunch.controler.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
+import androidx.fragment.app.Fragment;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,30 +23,38 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
+//import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnSuccessListener;
+/*import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
+import com.google.android.libraries.places.api.net.PlacesClient;*/
 import com.jgabrielfreitas.core.BlurImageView;
 import com.ngtiofack.go4lunch.R;
+import com.ngtiofack.go4lunch.api.Go4LunchUserHelper;
 import com.ngtiofack.go4lunch.controler.fragments.ListViewFragment;
 import com.ngtiofack.go4lunch.controler.fragments.MapsViewFragment;
 import com.ngtiofack.go4lunch.controler.fragments.WorkmatesFragment;
+import com.ngtiofack.go4lunch.model.SaveCurrentLocation;
 import com.ngtiofack.go4lunch.model.YourLunch;
 import com.ngtiofack.go4lunch.utils.CurrentLocation;
-import com.ngtiofack.go4lunch.api.Go4LunchUserHelper;
-import com.ngtiofack.go4lunch.model.SaveCurrentLocation;
 
 import java.util.Objects;
 
 import static com.ngtiofack.go4lunch.utils.mainUtils.RESTAURANTISNOTSELECTED;
+import static com.ngtiofack.go4lunch.utils.mainUtils.getRestaurantSelected;
 import static com.ngtiofack.go4lunch.utils.mainUtils.getYourLunch;
 import static com.ngtiofack.go4lunch.utils.mainUtils.saveUserId;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, MapsViewFragment.OnDataPass {
 
     CurrentLocation currentLocation = new CurrentLocation();
-    //Drawer Layout
+
 
     // Creating identifier to identify REST REQUEST (Update username)
     private static final int UPDATE_USERNAME = 30;
+
+    String TAG = "PlaceSearch";
     ImageView imageViewProfile;
     TextView textInputEditTextUsername;
     TextView textViewEmail;
@@ -57,6 +64,16 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     // 2 - Identify each Http Request
     private static final int SIGN_OUT_TASK = 10;
 
+    // Define a Place ID.
+   /* String placeId = "INSERT_PLACE_ID_HERE";
+    PlacesClient placesClient;
+    // Specify the fields to return.
+    List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+    // Construct a request object, passing the place ID and fields array.
+    FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields)
+            .build();*/
+
+    //Drawer Layout
     private DrawerLayout drawerLayout;
     // define an ActionBarDrawerToggle
     private ActionBarDrawerToggle mToggle;
@@ -70,11 +87,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    getSupportActionBar().setTitle("I'm Hungry!");
+                    Objects.requireNonNull(getSupportActionBar()).setTitle("I'm Hungry!");
                     selectedFragment = new MapsViewFragment();
                     break;
                 case R.id.navigation_dashboard:
-                    getSupportActionBar().setTitle("I'm Hungry!");
+                    Objects.requireNonNull(getSupportActionBar()).setTitle("I'm Hungry!");
                     SaveCurrentLocation currentLatLng = currentLocation.getSaveLatLng(MainActivity.this);
                     selectedFragment = ListViewFragment.newInstance(String.valueOf(currentLatLng.getLatitude()), String.valueOf(currentLatLng.getLongitude()));
                     break;
@@ -94,6 +111,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.configureToolbar();
+
+
+       /* // Initialize Places.
+        Places.initialize(getApplicationContext(), "AIzaSyCXBKZ5tT07uT8XdXsUuAMsVkV-Uxs70E8");
+        // Create a new Places client instance.
+        placesClient = Places.createClient(this);*/
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -123,8 +146,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         this.updateUIWhenCreating();
         this.createUserInFirestore();
 
-        CardView cardView = findViewById(R.id.cardViewSearch);
-        cardView.setVisibility(View.GONE);
     }
 
     @Override
@@ -140,6 +161,21 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         switch (item.getItemId()) {
 
             case R.id.menu_activity_main_search:
+
+                // Add a listener to handle the response.
+              /*  placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
+                    Place place = response.getPlace();
+                    Log.i(TAG, "Place found: " + place.getName());
+                }).addOnFailureListener((exception) -> {
+                    if (exception instanceof ApiException) {
+                        ApiException apiException = (ApiException) exception;
+                        int statusCode = apiException.getStatusCode();
+                        // Handle error with given status code.
+                        Log.e(TAG, "Place not found: " + exception.getMessage());
+                    }
+                });*/
+
+
                 return true;
             default:
                 if (mToggle.onOptionsItemSelected(item)) {
@@ -223,6 +259,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         // Sets the Toolbar
         setSupportActionBar(toolbar);
     }
+
     // 3 - Create OnCompleteListener called after tasks ended
     private OnSuccessListener<Void> updateUIAfterRESTRequestsCompleted(final int origin) {
         return new OnSuccessListener<Void>() {
@@ -270,7 +307,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             Go4LunchUserHelper.updateIsConnected(this.getCurrentUser().getUid(), connectionStatus).addOnFailureListener(this.onFailureListener());
         }
     }
-
     // http request that creates a user in firestore
 
     private void createUserInFirestore() {
@@ -281,7 +317,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             String username = this.getCurrentUser().getDisplayName();
             String uid = this.getCurrentUser().getUid();
             boolean isConnected = this.isCurrentUserLogged();
-            String restaurantSel = "";
+            String restaurantSel = getRestaurantSelected(this).equals("") ? "" : getRestaurantSelected(this);
 
             Go4LunchUserHelper.createUser(uid, username, urlPicture, isConnected, restaurantSel).addOnFailureListener(this.onFailureListener());
         }

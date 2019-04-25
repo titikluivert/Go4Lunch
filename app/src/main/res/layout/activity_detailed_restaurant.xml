@@ -19,7 +19,7 @@
         android:scaleType="fitXY"
         android:src="@drawable/lunchprofilimg" />
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabDetailRestaurant"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -142,7 +142,7 @@
         android:layout_below="@+id/optionsToRestaurant"
         android:background="#E7E7E7" />
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_workmates_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
