@@ -105,19 +105,9 @@ public class ChatsActivity extends BaseActivity implements ChatAdapter.Listener 
         Objects.requireNonNull(getSupportActionBar()).setTitle(getIntent().getStringExtra(getString(R.string.name_chat_person)));
         this.getCurrentUserFromFirestore();
 
-        chatSendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickSendMessage();
-            }
-        });
+        chatSendButton.setOnClickListener(v -> onClickSendMessage());
 
-        addFileButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickAddFile();
-            }
-        });
+        addFileButton.setOnClickListener(v -> onClickAddFile());
     }
 
     // --------------------
@@ -148,12 +138,7 @@ public class ChatsActivity extends BaseActivity implements ChatAdapter.Listener 
     // --------------------
     // 4 - Get Current User from Firestore
     private void getCurrentUserFromFirestore() {
-        Go4LunchUserHelper.getUser(getCurrentUser().getUid()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                modelCurrentUser = documentSnapshot.toObject(Go4LunchUsers.class);
-            }
-        });
+        Go4LunchUserHelper.getUser(getCurrentUser().getUid()).addOnSuccessListener(documentSnapshot -> modelCurrentUser = documentSnapshot.toObject(Go4LunchUsers.class));
     }
 
     // - Configure RecyclerView with a Query

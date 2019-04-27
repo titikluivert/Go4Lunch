@@ -96,12 +96,7 @@ public class ListViewFragment extends Fragment {
 
     // 2 - Configure the SwipeRefreshLayout
     private void configureSwipeRefreshLayout() {
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                executeHttpRequestWithRetrofitNews(mParam1, mParam2);
-            }
-        });
+        swipeRefreshLayout.setOnRefreshListener(() -> executeHttpRequestWithRetrofitNews(mParam1, mParam2));
     }
 
     // -----------------
@@ -126,27 +121,24 @@ public class ListViewFragment extends Fragment {
     // 1 - Configure item click on RecyclerView
     private void configureOnClickRecyclerView() {
         ItemClickSupport.addTo(recyclerView, R.layout.fragment_item_list_view)
-                .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        response = adapter.getRestaurantsResults(position);
-                        //TODO
-                        Intent myIntent = new Intent(getActivity(), DetailedRestaurantActivity.class);
-                        myIntent.putExtra(getString(R.string.name_restaurant), response.getName());
-                        myIntent.putExtra(getString(R.string.vicinity), response.getVicinity());
+                .setOnItemClickListener((recyclerView, position, v) -> {
+                    response = adapter.getRestaurantsResults(position);
+                    //TODO
+                    Intent myIntent = new Intent(getActivity(), DetailedRestaurantActivity.class);
+                    myIntent.putExtra(getString(R.string.name_restaurant), response.getName());
+                    myIntent.putExtra(getString(R.string.vicinity), response.getVicinity());
 
-                        if (response.getPhotos() == null) {
-                            photoUrl = "";
-                        } else {
-                            photoUrl = response.getPhotos().get(0).getPhotoReference();
-                            myIntent.putExtra(getString(R.string.photoHeight), response.getPhotos().get(0).getHeight());
-                            myIntent.putExtra(getString(R.string.photoWidth), response.getPhotos().get(0).getWidth());
-                        }
-                        myIntent.putExtra(getString(R.string.photosReference), photoUrl);
-                        myIntent.putExtra(getString(R.string.number_of_stars), response.getRating() == null ? 0 : mainUtils.getNumOfStars(response.getRating()));
-                        //myIntent.putExtra(getString(R.string.articleUrl), response.getWebUrl());
-                        startActivity(myIntent);
+                    if (response.getPhotos() == null) {
+                        photoUrl = "";
+                    } else {
+                        photoUrl = response.getPhotos().get(0).getPhotoReference();
+                        myIntent.putExtra(getString(R.string.photoHeight), response.getPhotos().get(0).getHeight());
+                        myIntent.putExtra(getString(R.string.photoWidth), response.getPhotos().get(0).getWidth());
                     }
+                    myIntent.putExtra(getString(R.string.photosReference), photoUrl);
+                    myIntent.putExtra(getString(R.string.number_of_stars), response.getRating() == null ? 0 : mainUtils.getNumOfStars(response.getRating()));
+                    //myIntent.putExtra(getString(R.string.articleUrl), response.getWebUrl());
+                    startActivity(myIntent);
                 });
     }
 

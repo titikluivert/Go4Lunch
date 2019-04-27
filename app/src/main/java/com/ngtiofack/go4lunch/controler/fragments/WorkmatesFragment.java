@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -33,9 +34,6 @@ import butterknife.ButterKnife;
 import static com.ngtiofack.go4lunch.utils.mainUtils.getUserId;
 
 public class WorkmatesFragment extends Fragment {
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
     @BindView(R.id.list_view_recycler_view_workmates)
     RecyclerView recyclerView; // 1 - Declare RecyclerView
@@ -72,12 +70,7 @@ public class WorkmatesFragment extends Fragment {
     }
 
     private void configureSwipeRefreshLayout() {
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                retrievingAllFirestoreUsers();
-            }
-        });
+        swipeRefreshLayout.setOnRefreshListener(this::retrievingAllFirestoreUsers);
     }
     // -----------------
     // CONFIGURATION
@@ -97,22 +90,15 @@ public class WorkmatesFragment extends Fragment {
     // 1 - Configure item click on RecyclerView
     private void configureOnClickRecyclerView() {
         ItemClickSupport.addTo(recyclerView, R.layout.fragment_item_list_workmates)
-                .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        response = adapter.getGo4LunchUsersResult(position);
-                        //TODO
-                        // 2 - Check if user is connected before launching MentorActivity
-                        if (response.getIsConnected()){
-                            startChatsActivity();
-                        } else {
-                           // showSnackBar(this.coordinatorLayout, getString(R.string.error_not_connected));
-                        }
-                       /* Intent myIntent = new Intent(getActivity(), DetailedRestaurantActivity.class);
+                .setOnItemClickListener((recyclerView, position, v) -> {
+                    response = adapter.getGo4LunchUsersResult(position);
 
-                        //myIntent.putExtra(getString(R.string.articleUrl), response.getWebUrl());
-                        startActivity(myIntent);*/
+                    if (response.getIsConnected()){
+                        startChatsActivity();
+                    } else {
+                        Toast.makeText(getActivity(), response.getUsername()+ " is not connected", Toast.LENGTH_LONG).show();
                     }
+
                 });
     }
 
@@ -122,18 +108,15 @@ public class WorkmatesFragment extends Fragment {
 
         FirebaseFirestore.getInstance().collection("users").get()
 
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                Go4LunchUsers go4LunchUsers = document.toObject(Go4LunchUsers.class);
-                                if(!go4LunchUsers.getUid().equals(getUserId(getContext()))){
-                                        go4LunchUsersListFromFirebase.add(go4LunchUsers);
-                                }
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                            Go4LunchUsers go4LunchUsers = document.toObject(Go4LunchUsers.class);
+                            if(!go4LunchUsers.getUid().equals(getUserId(getContext()))){
+                                    go4LunchUsersListFromFirebase.add(go4LunchUsers);
                             }
-                            updateUI(go4LunchUsersListFromFirebase);
                         }
+                        updateUI(go4LunchUsersListFromFirebase);
                     }
                 });
 
@@ -146,7 +129,6 @@ public class WorkmatesFragment extends Fragment {
         go4LunchUsersList.addAll(results);
         adapter.setGo4LunchUsersList(go4LunchUsersList);
     }
-
 
     // 1 - Starting Mentor Activity
     private void startChatsActivity(){

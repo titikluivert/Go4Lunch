@@ -7,7 +7,7 @@
     <color name="colorFaceBook">#3F51B5</color>
     <color name="colorGoogle">#F4511E</color>
 
-    <color name="colorPrimaryDarkDyn">#585B5D</color>
+    <color name="colorPrimaryDarkDyn">#444444</color>
     <color name="colorNavDrawer">#FF8A50</color>
     <color name="colorGrey">#D2D2D2</color>
 
@@ -16,5 +16,5 @@
     <color name="colorSandLight">#ECDAAF</color>
     <color name="colorSand">#EBCB94</color>
     <color name="colorError">#FF5252</color>
-
+    <color name="colorGreenIconMap">#69F0AE</color>
 </resources>

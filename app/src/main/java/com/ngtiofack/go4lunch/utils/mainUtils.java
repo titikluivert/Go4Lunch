@@ -21,6 +21,7 @@ public class mainUtils {
 
     public static final String RESTAURANTISNOTSELECTED = "No restaurant is selected";
     public static final String COLLECTION_NAME = "messages";
+    public static final String RESTAURANTSELECTED = "restaurantSelected";
 
 
     public static int getDistanceToRestaurants(double latA, double longA, double latB, double longB) {

@@ -37,14 +37,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected OnFailureListener onFailureListener() {
-        return new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                showToast(getString(R.string.error_unknown_error));
-            }
-        };
+        return e -> showToast(getString(R.string.error_unknown_error));
     }
-
     protected void showProgress(String msg) {
 
         int llPadding = 50;
@@ -109,11 +103,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .setMessage(msg)
                 .setCancelable(false)
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                }).create().show();
+                .setPositiveButton("OK", (dialogInterface, i) -> dialogInterface.dismiss()).create().show();
     }
 }

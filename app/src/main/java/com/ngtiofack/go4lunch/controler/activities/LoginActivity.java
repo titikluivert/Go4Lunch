@@ -44,20 +44,9 @@ public class LoginActivity extends BaseActivity {
         BlurImageView blurImageView = findViewById(R.id.BlurImageView);
         blurImageView.setBlur(5);
 
-// clear FLAG_TRANSLUCENT_STATUS flag:
-        //getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-
-// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
-
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Window w = getWindow();
-            w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        }*/
-// finally change the color
-       // getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
         //getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            getWindow().setStatusBarColor(ContextCompat.getColor(this,android.R.color.darker_gray));
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDarkDyn));
         }
 
     }

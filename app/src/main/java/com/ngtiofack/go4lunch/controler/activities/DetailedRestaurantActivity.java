@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
@@ -16,15 +18,13 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.ngtiofack.go4lunch.R;
+import com.ngtiofack.go4lunch.api.RestaurantHelper;
 import com.ngtiofack.go4lunch.model.RestaurantSelected;
 import com.ngtiofack.go4lunch.utils.mainUtils;
 
@@ -53,7 +53,6 @@ public class DetailedRestaurantActivity extends BaseActivity {
     int photoHeight;
     int photoWidth;
     private RecyclerView mResultList;
-    private DatabaseReference mUserDatabase, mDatabase;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,8 +61,6 @@ public class DetailedRestaurantActivity extends BaseActivity {
         glide = Glide.with(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
-        mUserDatabase = FirebaseDatabase.getInstance().getReference("restaurantSelected");
-        mDatabase = FirebaseDatabase.getInstance().getReference();
         mResultList = findViewById(R.id.list_workmates_recycler_view);
         mResultList.setHasFixedSize(true);
         mResultList.setLayoutManager(new LinearLayoutManager(this));
@@ -128,62 +125,47 @@ public class DetailedRestaurantActivity extends BaseActivity {
         uid = this.getCurrentUser().getUid();
 
         getUser(uid)
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        restaurantSelectedStoreOnFirebase = documentSnapshot.getString("restaurantSelected");
-                        assert restaurantSelectedStoreOnFirebase != null;
-                        if (restaurantSelectedStoreOnFirebase.equals(nameRestaurant)) {
-                            fab.setImageResource(R.drawable.check_restaurant);
-                            writeNewUser(getCurrentUser().getDisplayName(), nameRestaurant, Objects.requireNonNull(getCurrentUser().getPhotoUrl()).toString());
-                            fabIsClicked = false;
-                        }
+                .addOnSuccessListener(documentSnapshot -> {
+                    restaurantSelectedStoreOnFirebase = documentSnapshot.getString("restaurantSelected");
+                    assert restaurantSelectedStoreOnFirebase != null;
+                    if (restaurantSelectedStoreOnFirebase.equals(nameRestaurant)) {
+                        fab.setImageResource(R.drawable.check_restaurant);
+                        writeNewUser(getCurrentUser().getDisplayName(), nameRestaurant, Objects.requireNonNull(getCurrentUser().getPhotoUrl()).toString());
+                        fabIsClicked = false;
                     }
                 });
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        fab.setOnClickListener(view -> {
 
-                if (fabIsClicked) {
-                    fab.setImageResource(R.drawable.check_restaurant);
-                    updateRestaurantSelected(uid, nameRestaurant);
-                    dataChanged = false;
-                    deleteNewUser();
-                    writeNewUser(getCurrentUser().getDisplayName(), nameRestaurant, Objects.requireNonNull(getCurrentUser().getPhotoUrl()).toString());
-                    saveYourLunch(getApplicationContext(), nameRestaurant, photoReferenceUrl, photoHeight, photoWidth, vicinity, numOfStars);
-                    fabIsClicked = false;
+            if (fabIsClicked) {
+                fab.setImageResource(R.drawable.check_restaurant);
+                updateRestaurantSelected(uid, nameRestaurant);
+                dataChanged = false;
+                deleteNewUser();
+                writeNewUser(getCurrentUser().getDisplayName(), nameRestaurant, Objects.requireNonNull(getCurrentUser().getPhotoUrl()).toString());
+                saveYourLunch(getApplicationContext(), nameRestaurant, photoReferenceUrl, photoHeight, photoWidth, vicinity, numOfStars);
+                fabIsClicked = false;
 
-                } else {
-                    fabIsClicked = true;
-                    dataChanged = true;
-                    updateRestaurantSelected(uid, "");
-                    saveYourLunch(getApplicationContext(), RESTAURANTISNOTSELECTED, photoReferenceUrl, photoHeight, photoWidth, vicinity, numOfStars);
-                    fab.setImageResource(R.drawable.please_select_restaurant);
-                    deleteNewUser();
-                }
-                saveRestaurantSelected(getApplicationContext(), nameRestaurant);
+            } else {
+                fabIsClicked = true;
+                dataChanged = true;
+                updateRestaurantSelected(uid, "");
+                saveYourLunch(getApplicationContext(), RESTAURANTISNOTSELECTED, photoReferenceUrl, photoHeight, photoWidth, vicinity, numOfStars);
+                fab.setImageResource(R.drawable.please_select_restaurant);
+                deleteNewUser();
             }
+            saveRestaurantSelected(getApplicationContext(), nameRestaurant);
         });
 
-        website.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Snackbar.make(v, "No website available", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        website.setOnClickListener(v -> Snackbar.make(v, "No website available", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show());
 
-        phoneNum.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Snackbar.make(v, "No phone number available", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        phoneNum.setOnClickListener(v -> Snackbar.make(v, "No phone number available", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show());
 
-        likeRestaurant.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Code here executes on main thread after user presses button
-            }
+        likeRestaurant.setOnClickListener(v -> {
+            FirebaseFirestore.getInstance().collection("like").document(nameRestaurant).collection(uid).document(uid).set(true);
+            // Code here executes on main thread after user presses button
         });
 
         this.firebaseUserSearch(nameRestaurant);
@@ -191,7 +173,7 @@ public class DetailedRestaurantActivity extends BaseActivity {
 
     private void firebaseUserSearch(String RestaurantName) {
 
-        Query firebaseSearchQuery = mUserDatabase.child(RestaurantName).orderByChild("userName");
+        Query firebaseSearchQuery = RestaurantHelper.getRestaurantCollection().child(RestaurantName).orderByChild("userName");
         FirebaseRecyclerAdapter<RestaurantSelected, UsersViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<RestaurantSelected, UsersViewHolder>(
 
                 RestaurantSelected.class,
@@ -218,12 +200,12 @@ public class DetailedRestaurantActivity extends BaseActivity {
             mView = itemView;
         }
 
-        public void setDetails(Context ctx, String userName, String userImage) {
+        private void setDetails(Context ctx, String userName, String userImage) {
 
             TextView user_name = mView.findViewById(R.id.menu_and_restaurant_name);
             ImageView user_image = mView.findViewById(R.id.user_item_image);
 
-            user_name.setText(userName + " is joining!");
+            user_name.setText(String.format("%s%s", userName, ctx.getString(R.string.is_joining)));
             Glide.with(ctx).load(userImage).apply(RequestOptions.circleCropTransform()).into(user_image);
 
         }
@@ -231,34 +213,33 @@ public class DetailedRestaurantActivity extends BaseActivity {
 
     private void writeNewUser(String name, String restaurantName, String urlPicture) {
         RestaurantSelected user = new RestaurantSelected(name, urlPicture);
-        mDatabase.child("restaurantSelected").child(restaurantName).child(uid).setValue(user);
+        RestaurantHelper.getRestaurantCollection().child(restaurantName).child(uid).setValue(user);
     }
 
     private void deleteNewUser() {
 
-        mDatabase.child("restaurantSelected").addListenerForSingleValueEvent(new ValueEventListener() {
+        RestaurantHelper.getRestaurantCollection().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Iterable<DataSnapshot> keys = dataSnapshot.getChildren();
                 for (DataSnapshot key : keys) {
                     Iterable<DataSnapshot> keys2 = key.getChildren();
                     for (DataSnapshot key0 : keys2) {
                         // RestaurantSelected restaurantSelected = key0.getValue(RestaurantSelected.class);
                         if (!nameRestaurant.equals(key.getKey()) || dataChanged) {
-                            if (key0.getKey().equals(uid))
-                                mDatabase.child("restaurantSelected").child(key.getKey()).child(uid).removeValue();
+                            if (Objects.requireNonNull(key0.getKey()).equals(uid))
+                                RestaurantHelper.getRestaurantCollection().child(Objects.requireNonNull(key.getKey())).child(uid).removeValue();
                         }
                     }
                 }
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
             }
 
 
         });
 
     }
-
 }

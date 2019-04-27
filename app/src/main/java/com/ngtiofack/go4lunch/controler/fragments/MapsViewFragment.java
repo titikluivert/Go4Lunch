@@ -4,20 +4,24 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -28,16 +32,24 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.ngtiofack.go4lunch.R;
+import com.ngtiofack.go4lunch.api.RestaurantHelper;
 import com.ngtiofack.go4lunch.controler.activities.DetailedRestaurantActivity;
 import com.ngtiofack.go4lunch.model.RestaurantsModel;
 import com.ngtiofack.go4lunch.utils.CurrentLocation;
 import com.ngtiofack.go4lunch.utils.RestaurantsServiceStreams;
 import com.ngtiofack.go4lunch.utils.mainUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.observers.DisposableObserver;
 
@@ -46,16 +58,17 @@ import static com.ngtiofack.go4lunch.utils.mainUtils.TYPE;
 
 public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
 
-    public static final int MY_PERMISSION_REQUEST_CODE = 11;
-    FusedLocationProviderClient mFusedLocationClient;
-    double latitude;
-    double longitude;
-    CurrentLocation currentLocation = new CurrentLocation();
+    private static final int MY_PERMISSION_REQUEST_CODE = 11;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private double latitude;
+    private double longitude;
+    private CurrentLocation currentLocation = new CurrentLocation();
     private GoogleMap mMap;
     private View mView;
-    private Marker mCurrLocationMarker, m;
-    OnDataPass dataPasser;
-    LocationCallback mLocationCallback = new LocationCallback() {
+    private Marker m;
+    private OnDataPass dataPasser;
+    private List<String> reselected = new ArrayList<>();
+    private LocationCallback mLocationCallback = new LocationCallback() {
 
         @Override
         public void onLocationResult(LocationResult locationResult) {
@@ -63,11 +76,13 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
             for (Location location : locationResult.getLocations()) {
 
                 Log.i("MapsActivity", "Location: " + location.getLatitude() + " " + location.getLongitude());
-                if (mCurrLocationMarker != null) {
-                    mCurrLocationMarker.remove();
+                if (m != null) {
+                    m.remove();
                 }
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
+
+                checkIfARestaurantIsAlreadySelected();
 
                 buildRetrofitAndGetResponse(location);
             }
@@ -124,7 +139,6 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
             mMap.setMyLocationEnabled(true);
         }
 
-
     }
 
     @Override
@@ -132,18 +146,15 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        switch (requestCode) {
-
-            case MY_PERMISSION_REQUEST_CODE:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (ActivityCompat.checkSelfPermission(mView.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                        mMap.setMyLocationEnabled(true);
-                    }
-                } else {
-                    Toast.makeText(mView.getContext(), "This app requires location permissions to be granted", Toast.LENGTH_LONG).show();
-                    //finish();
+        if (requestCode == MY_PERMISSION_REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(mView.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    mMap.setMyLocationEnabled(true);
                 }
-                break;
+            } else {
+                Toast.makeText(mView.getContext(), "This app requires location permissions to be granted", Toast.LENGTH_LONG).show();
+                //finish();
+            }
         }
     }
 
@@ -178,6 +189,9 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
                             photoWidth = 0;
                         }
 
+                        //Query firebaseSearchQuery = RestaurantHelper.getRestaurantCollection().child(placeName).orderByChild("userName");
+
+
                         MarkerOptions markerOptions = new MarkerOptions();
                         LatLng latLng = new LatLng(lat, lng);
                         // Position of Marker on Map
@@ -187,64 +201,66 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
                         markerOptions.snippet(photoRef + ":" + photoHeight + ":" + photoWidth + ":" + rating);
 
                         // Adding Marker to the Camera. // Adding colour to the marker
-                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_restaurant_black_24dp));
-                        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-
-                        //
+                        // markerOptions.icon(getMarkerIcon("#FF8A50"));
+                        ///icon(BitmapDescriptorFactory.fromBitmap(changeBitmapColor(ContextCompat.getColor(getContext(), R.color.colorAccent))));
+                        // markerOptions.icon(bitmapDescriptorFromVector(getContext(), R.drawable.ic_restaurant_map_marker_));
+                        //icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_restaurant_black_24dp));
+                        if (reselected.contains(placeName)) {
+                            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                        } else {
+                            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                        }
+                        // stop progressBar
                         passData(true);
-                        // move map camera
-                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                        mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
 
                         if (i == results.getResults().size() - 1) {
                             //Place current location marker
-                            LatLng yourLocation = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
+                            latLng = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
                             //MarkerOptions markerOptions = new MarkerOptions();
-                            markerOptions.position(yourLocation);
+                            markerOptions.position(latLng);
                             markerOptions.title("Current Position");
                             // markerOptions.snippet()
                             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
 
-                            //move map camera
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(yourLocation, mainUtils.zoomLevel));
                         }
+                        //move map camera
+
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, mainUtils.zoomLevel));
 
                         m = mMap.addMarker(markerOptions);
                         m.setTag(i);
-                        // For simplicity an anonymous marker click listener is specified.
-                        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
 
-                            // Return true if the click event is consumed (and therefore no
-                            // info window is displayed) or false to produce default behavior.
+                        /* For simplicity an anonymous marker click listener is specified.
+                         Return true if the click event is consumed (and therefore no
+                         info window is displayed) or false to produce default behavior.*/
 
-                            public boolean onMarkerClick(final Marker marker) {
-                                String[] name_and_address, refPhotoHeightWidth;
-                                Integer clickCount = (Integer) marker.getTag();
-                                String photoUrl;
-                                // Check if a click count was set, then display the click count.
-                                if (clickCount != null) {
-                                    clickCount = clickCount + 1;
-                                    marker.setTag(clickCount);
-                                    name_and_address = marker.getTitle().split(":");
-                                    refPhotoHeightWidth = marker.getSnippet().split(":");
-                                    Intent myIntent = new Intent(getActivity(), DetailedRestaurantActivity.class);
-                                    myIntent.putExtra(getString(R.string.vicinity), name_and_address[1].trim());
-                                    myIntent.putExtra(getString(R.string.name_restaurant), name_and_address[0].trim());
+                        mMap.setOnMarkerClickListener(marker -> {
+                            String[] name_and_address, refPhotoHeightWidth;
+                            Integer clickCount = (Integer) marker.getTag();
+                            String photoUrl;
+                            // Check if a click count was set, then display the click count.
+                            if (clickCount != null) {
+                                clickCount = clickCount + 1;
+                                marker.setTag(clickCount);
+                                name_and_address = marker.getTitle().split(":");
+                                refPhotoHeightWidth = marker.getSnippet().split(":");
+                                Intent myIntent = new Intent(getActivity(), DetailedRestaurantActivity.class);
+                                myIntent.putExtra(getString(R.string.vicinity), name_and_address[1].trim());
+                                myIntent.putExtra(getString(R.string.name_restaurant), name_and_address[0].trim());
 
-                                    if (refPhotoHeightWidth[0].isEmpty()) {
-                                        photoUrl = "";
-                                    } else {
-                                        photoUrl = refPhotoHeightWidth[0];
-                                        myIntent.putExtra(getString(R.string.photoHeight), refPhotoHeightWidth[1]);
-                                        myIntent.putExtra(getString(R.string.photoWidth), refPhotoHeightWidth[2]);
-                                    }
-                                    myIntent.putExtra(getString(R.string.photosReference), photoUrl);
-                                    myIntent.putExtra(getString(R.string.number_of_stars), mainUtils.getNumOfStars(Double.parseDouble(refPhotoHeightWidth[3])));
-
-                                    startActivity(myIntent);
+                                if (refPhotoHeightWidth[0].isEmpty()) {
+                                    photoUrl = "";
+                                } else {
+                                    photoUrl = refPhotoHeightWidth[0];
+                                    myIntent.putExtra(getString(R.string.photoHeight), refPhotoHeightWidth[1]);
+                                    myIntent.putExtra(getString(R.string.photoWidth), refPhotoHeightWidth[2]);
                                 }
-                                return true;
+                                myIntent.putExtra(getString(R.string.photosReference), photoUrl);
+                                myIntent.putExtra(getString(R.string.number_of_stars), mainUtils.getNumOfStars(Double.parseDouble(refPhotoHeightWidth[3])));
+
+                                startActivity(myIntent);
                             }
+                            return true;
                         });
                     }
                 } catch (Exception e) {
@@ -267,6 +283,28 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
+    // method definition
+   /* private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorDrawableResourceId) {
+        Drawable background = ContextCompat.getDrawable(context, R.drawable.ic_place_black_24dp);
+        background.setBounds(0, 0, background.getIntrinsicWidth(), background.getIntrinsicHeight());
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorDrawableResourceId);
+        vectorDrawable.setBounds(40, 20, vectorDrawable.getIntrinsicWidth() + 40, vectorDrawable.getIntrinsicHeight() + 20);
+        Bitmap bitmap = Bitmap.createBitmap(background.getIntrinsicWidth(), background.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        background.draw(canvas);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }*/
+
+    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -278,13 +316,39 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
         void onDataPass(boolean data);
     }
 
-    public void passData(boolean data) {
+    private void passData(boolean data) {
         dataPasser.onDataPass(data);
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         dataPasser = (OnDataPass) context;
+    }
+
+
+    private void checkIfARestaurantIsAlreadySelected() {
+
+
+        RestaurantHelper.getRestaurantCollection().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Iterable<DataSnapshot> keys = dataSnapshot.getChildren();
+                for (DataSnapshot key : keys) {
+
+                    Iterable<DataSnapshot> keys2 = key.getChildren();
+                    for (DataSnapshot key0 : keys2) {
+                        reselected.add(key.getKey());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+
+
+        });
+
     }
 }
