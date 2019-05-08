@@ -13,15 +13,18 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.Query;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.ngtiofack.go4lunch.R;
-import com.ngtiofack.go4lunch.controler.activities.ChatsActivity;
+import com.ngtiofack.go4lunch.api.RestaurantHelper;
+import com.ngtiofack.go4lunch.controler.activities.DetailedRestaurantActivity;
 import com.ngtiofack.go4lunch.model.Go4LunchUsers;
+import com.ngtiofack.go4lunch.model.RestaurantSelected;
+import com.ngtiofack.go4lunch.model.YourLunch;
 import com.ngtiofack.go4lunch.utils.ItemClickSupport;
+import com.ngtiofack.go4lunch.utils.mainUtils;
 import com.ngtiofack.go4lunch.view.WorkmatesAdapter;
 
 import java.util.ArrayList;
@@ -40,6 +43,7 @@ public class WorkmatesFragment extends Fragment {
     // 1 - Declare the SwipeRefreshLayout
     @BindView(R.id.list_view__swipe_container_workmates)
     SwipeRefreshLayout swipeRefreshLayout;
+
 
     private List<Go4LunchUsers> go4LunchUsersList, go4LunchUsersListFromFirebase;
     private WorkmatesAdapter adapter;
@@ -66,6 +70,8 @@ public class WorkmatesFragment extends Fragment {
         this.configureOnClickRecyclerView();
         this.retrievingAllFirestoreUsers();
         this.configureSwipeRefreshLayout();
+
+       // chatButton.setOnClickListener(v -> startChatsActivity());
         return view;
     }
 
@@ -93,14 +99,31 @@ public class WorkmatesFragment extends Fragment {
                 .setOnItemClickListener((recyclerView, position, v) -> {
                     response = adapter.getGo4LunchUsersResult(position);
 
-                    if (response.getIsConnected()){
-                        startChatsActivity();
-                    } else {
-                        Toast.makeText(getActivity(), response.getUsername()+ " is not connected", Toast.LENGTH_LONG).show();
-                    }
+                    //TODO
 
+                    if(response.getYourLunch().getName() != null) {
+                        Intent myIntent = new Intent(getActivity(), DetailedRestaurantActivity.class);
+                        myIntent.putExtra(getString(R.string.name_restaurant), response.getYourLunch().getName());
+                        myIntent.putExtra(getString(R.string.vicinity), response.getYourLunch().getVicinity());
+                        String photoUrl;
+                        if (response.getYourLunch().getPhotoUrlRef() == null) {
+                            photoUrl = "";
+                        } else {
+                            photoUrl = response.getYourLunch().getPhotoUrlRef();
+                            myIntent.putExtra(getString(R.string.photoHeight), response.getYourLunch().getPhotoHeight());
+                            myIntent.putExtra(getString(R.string.photoWidth), response.getYourLunch().getPhotoWidth());
+                        }
+                        myIntent.putExtra(getString(R.string.photosReference), photoUrl);
+                        myIntent.putExtra(getString(R.string.number_of_stars), response.getYourLunch().getRatingStars());
+                        //myIntent.putExtra(getString(R.string.articleUrl), response.getWebUrl());
+                        startActivity(myIntent);
+                    }else {
+
+                     Toast.makeText(getContext(), "No restaurant selected yet", Toast.LENGTH_LONG).show();
+                    }
                 });
     }
+
 
     private void retrievingAllFirestoreUsers() {
 
@@ -112,7 +135,7 @@ public class WorkmatesFragment extends Fragment {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                             Go4LunchUsers go4LunchUsers = document.toObject(Go4LunchUsers.class);
-                            if(!go4LunchUsers.getUid().equals(getUserId(getContext()))){
+                            if(!go4LunchUsers.getUid().equals(getUserId(getActivity()))){
                                     go4LunchUsersListFromFirebase.add(go4LunchUsers);
                             }
                         }
@@ -130,12 +153,6 @@ public class WorkmatesFragment extends Fragment {
         adapter.setGo4LunchUsersList(go4LunchUsersList);
     }
 
-    // 1 - Starting Mentor Activity
-    private void startChatsActivity(){
-        Intent intent = new Intent(getContext(), ChatsActivity.class);
-        intent.putExtra(getString(R.string.receiverId), response.getUid());
-        intent.putExtra(getString(R.string.name_chat_person), response.getUsername());
-        startActivity(intent);
-    }
+
 
 }

@@ -2,10 +2,25 @@ package com.ngtiofack.go4lunch.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 
+import androidx.core.content.ContextCompat;
+
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.ngtiofack.go4lunch.R;
 import com.ngtiofack.go4lunch.model.YourLunch;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by NG-TIOFACK on 2/13/2019.
@@ -18,6 +33,8 @@ public class mainUtils {
     public static final String url = "https://maps.googleapis.com/maps/";
     public static final int PROXIMITY_RADIUS = 1000;
     public static final String TYPE = "restaurant";
+    public static  final String RESTAURANT_LIKE = "Restaurants";
+    public static  final String LIKE = "like";
 
     public static final String RESTAURANTISNOTSELECTED = "No restaurant is selected";
     public static final String COLLECTION_NAME = "messages";
@@ -58,7 +75,7 @@ public class mainUtils {
         return retValue;
     }
 
-    public static void saveYourLunch(Context ctx, String name, String photoRef,int photoHeight, int photoWidth, String vicinity, int rating) {
+    public static void saveYourLunch(Context ctx, String name, String vicinity, int photoHeight, int photoWidth, String photoRef, int rating) {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -149,5 +166,15 @@ public class mainUtils {
 
         return hex.toString();
     }
+
+    public static BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
 }
 

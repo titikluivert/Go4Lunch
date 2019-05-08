@@ -10,7 +10,7 @@ public class Go4LunchUsers {
     private String uid;
     private String username;
     private boolean isConnected;
-    private String restaurantSelected;
+    private YourLunch yourLunch;
 
     @Nullable
     private String urlPicture;
@@ -18,12 +18,12 @@ public class Go4LunchUsers {
     public Go4LunchUsers() {
     }
 
-    public Go4LunchUsers(String uid, String username, String urlPicture, boolean isConnected, String restaurantSelected) {
+    public Go4LunchUsers(String uid, String username, String urlPicture, boolean isConnected,YourLunch yourLunch) {
         this.uid = uid;
         this.username = username;
         this.urlPicture = urlPicture;
         this.isConnected = isConnected;
-        this.restaurantSelected = restaurantSelected;
+        this.yourLunch = yourLunch;
     }
 
     // --- GETTERS ---
@@ -39,12 +39,13 @@ public class Go4LunchUsers {
         return urlPicture;
     }
 
-    public String getRestaurantSelected() {
-        return restaurantSelected;
-    }
-
     public String getUsername() {
         return username;
+    }
+
+
+    public YourLunch getYourLunch() {
+        return yourLunch;
     }
 
 
@@ -62,11 +63,11 @@ public class Go4LunchUsers {
         isConnected = mentor;
     }
 
-    public void setRestaurantSelected(String restaurant) {
-        restaurantSelected = restaurant;
-    }
-
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public void setYourLunch(YourLunch yourLunch) {
+        this.yourLunch = yourLunch;
     }
 }

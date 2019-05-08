@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.os.Build;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
@@ -38,27 +39,28 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private YourLunch mYourLunch;
     String message;
 
-    private final int NOTIFICATION_ID = 007;
-    private final String NOTIFICATION_TAG = "FIREBASEOC";
-
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         if (remoteMessage.getNotification() != null) {
-             message = remoteMessage.getNotification().getBody();
+            message = remoteMessage.getNotification().getBody();
             // 8 - Show notification after received message
             this.firebaseUserAndRestaurant(this);
-           // this.sendVisualNotification(message);
         }
     }
-    // ---
-    private void sendVisualNotification(String messageBody) {
 
-        String colleaguesStr = "";
+    // ---
+    private void sendVisualNotification() {
+
+        StringBuilder colleaguesStr = new StringBuilder();
         for (int i = 0; i < nameOfColleagueForLunch.size(); i++) {
-            colleaguesStr += nameOfColleagueForLunch.get(i) + ",";
+            colleaguesStr.append(nameOfColleagueForLunch.get(i)).append(",");
         }
 
-        colleaguesStr = colleaguesStr.substring(0, colleaguesStr.length() - 1);
+        if (colleaguesStr.length() > 0) {
+            colleaguesStr = new StringBuilder(colleaguesStr.substring(0, colleaguesStr.length() - 1));
+        } else {
+            colleaguesStr = new StringBuilder("no one");
+        }
         // 1 - Create an Intent that will be shown when user will click on the Notification
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
@@ -67,20 +69,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
         inboxStyle.setBigContentTitle("Restaurant for Lunch today");
         inboxStyle.setSummaryText("Lunch Reminder");
-        inboxStyle.addLine("Restaurant Name : "+mYourLunch.getName());
-        inboxStyle.addLine("Address : "+mYourLunch.getVicinity());
+        inboxStyle.addLine("Restaurant Name : " + mYourLunch.getName());
+        inboxStyle.addLine("Address : " + mYourLunch.getVicinity());
         inboxStyle.addLine("Colleagues which come: " + colleaguesStr);
 
         // 4 - Build a Notification object
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, TAG)
-                    .setSmallIcon(R.drawable.ic_notifications_active_black_24dp)
-                    .setColor(ContextCompat.getColor(this, R.color.colorPrimary))
-                    .setContentTitle(getString(R.string.app_name))
-                    .setContentText("Info for Lunch")
-                    .setAutoCancel(true)
-                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                    .setContentIntent(pendingIntent)
-                    .setStyle(inboxStyle);
+                .setSmallIcon(R.drawable.ic_notifications_active_black_24dp)
+                .setColor(ContextCompat.getColor(this, R.color.colorPrimary))
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText("Info for Lunch")
+                .setAutoCancel(true)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setContentIntent(pendingIntent)
+                .setStyle(inboxStyle);
 
         // 5 - Add the Notification to the Notification Manager and show it.
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -93,6 +95,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
 
         // 7 - Show notification
+        int NOTIFICATION_ID = 7;
+        String NOTIFICATION_TAG = "FIREBASEOC";
         notificationManager.notify(NOTIFICATION_TAG, NOTIFICATION_ID, notificationBuilder.build());
     }
 
@@ -109,13 +113,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         Iterable<DataSnapshot> keysFinal = keyRestaurantName.getChildren();
                         if (Objects.equals(keyRestaurantName.getKey(), mYourLunch.getName())) {
                             for (DataSnapshot key0 : keysFinal) {
-                                if (!key0.getKey().equals(getUserId(context))) {
-                                    RestaurantSelected restaurantSelected = key0.getValue(RestaurantSelected.class);
-                                    assert restaurantSelected != null;
-                                    nameOfColleagueForLunch.add(restaurantSelected.getUserName());
+                                if (key0.getKey() != null) {
+                                    if (!key0.getKey().equals(getUserId(context))) {
+                                        RestaurantSelected restaurantSelected = key0.getValue(RestaurantSelected.class);
+                                        assert restaurantSelected != null;
+                                        nameOfColleagueForLunch.add(restaurantSelected.getUserName());
+                                    }
                                 }
                             }
-                            sendVisualNotification(message);
+                            sendVisualNotification();
                         }
                     }
                 }

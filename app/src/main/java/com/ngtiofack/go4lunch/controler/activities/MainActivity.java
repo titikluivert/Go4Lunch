@@ -4,6 +4,8 @@ package com.ngtiofack.go4lunch.controler.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+
+import com.google.android.libraries.places.compat.Places;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import androidx.fragment.app.Fragment;
@@ -113,8 +115,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         this.configureToolbar();
 
 
-       /* // Initialize Places.
-        Places.initialize(getApplicationContext(), "AIzaSyCXBKZ5tT07uT8XdXsUuAMsVkV-Uxs70E8");
+      /* // Initialize Places.
+        Place.initialize(getApplicationContext(), "AIzaSyCXBKZ5tT07uT8XdXsUuAMsVkV-Uxs70E8");
         // Create a new Places client instance.
         placesClient = Places.createClient(this);*/
 
@@ -317,9 +319,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             String username = this.getCurrentUser().getDisplayName();
             String uid = this.getCurrentUser().getUid();
             boolean isConnected = this.isCurrentUserLogged();
-            String restaurantSel = getRestaurantSelected(this).equals("") ? "" : getRestaurantSelected(this);
 
-            Go4LunchUserHelper.createUser(uid, username, urlPicture, isConnected, restaurantSel).addOnFailureListener(this.onFailureListener());
+            Go4LunchUserHelper.createUser(uid, username, urlPicture, isConnected,getYourLunch(getApplicationContext())).addOnFailureListener(this.onFailureListener());
         }
     }
 

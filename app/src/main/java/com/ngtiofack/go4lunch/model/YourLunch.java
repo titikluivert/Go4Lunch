@@ -15,6 +15,10 @@ public class YourLunch {
 
     }
 
+    public YourLunch(int ratingStars) {
+        this.ratingStars = ratingStars;
+    }
+
     public YourLunch(String name, String vicinity, int photoHeight, int photoWidth, String photoUrlRef, int ratingStars) {
         this.name = name;
         this.vicinity = vicinity;

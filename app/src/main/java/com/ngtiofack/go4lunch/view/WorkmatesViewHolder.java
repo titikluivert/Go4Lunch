@@ -1,15 +1,20 @@
 package com.ngtiofack.go4lunch.view;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Typeface;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
 import com.ngtiofack.go4lunch.R;
+import com.ngtiofack.go4lunch.controler.activities.ChatsActivity;
 import com.ngtiofack.go4lunch.model.Go4LunchUsers;
 
 import butterknife.BindView;
@@ -26,6 +31,10 @@ public class WorkmatesViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.user_item_image)
     ImageView imageView;
 
+    @BindView(R.id.BtnChat)
+    ImageButton chatButton;
+
+
     public WorkmatesViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
@@ -36,24 +45,34 @@ public class WorkmatesViewHolder extends RecyclerView.ViewHolder {
         boolean restaurantChoosed = false;
 
 
-        String openHours;
-        if (!result.getRestaurantSelected().isEmpty()) {
-            openHours = " is eating";
-            restaurantChoosed = true;
-        } else {
-            openHours = " hasn't decided yet";
+        String uid = result.getUid();
+        String name = result.getUsername();
+
+        chatButton.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), ChatsActivity.class);
+            intent.putExtra(v.getContext().getString(R.string.receiverId), uid);
+            intent.putExtra(v.getContext().getString(R.string.name_chat_person), name);
+            v.getContext().startActivity(intent);
+        });
+
+        String openHours = " hasn't decided yet";
+        ;
+
+        if (result.getYourLunch() != null) {
+            if (result.getYourLunch().getName() != null) {
+                if (!result.getYourLunch().getName().isEmpty()) {
+                    openHours = " is eating";
+                    restaurantChoosed = true;
+                }
+            }
         }
-
-        //ContextCompat.getColor(this, R.color.colorPrimary))
-
-        if(!restaurantChoosed) {
+        if (!restaurantChoosed) {
             this.user_and_menuRestaurant.setText(result.getUsername() + " " + openHours);
-            this.user_and_menuRestaurant.setTextColor(ContextCompat.getColor(this.imageView.getContext(),R.color.colorGrey));
+            this.user_and_menuRestaurant.setTextColor(ContextCompat.getColor(this.imageView.getContext(), R.color.colorGrey));
             this.user_and_menuRestaurant.setTypeface(null, Typeface.ITALIC);
-        }
-        else{
+        } else {
 
-            this.user_and_menuRestaurant.setText(result.getUsername() + " " + openHours + " ( " + result.getRestaurantSelected() + " )");
+            this.user_and_menuRestaurant.setText(result.getUsername() + " " + openHours + " ( " + result.getYourLunch().getName() + " )");
         }
         glide.load(result.getUrlPicture()).apply(RequestOptions.circleCropTransform()).into(imageView);
 

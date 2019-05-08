@@ -3,8 +3,10 @@ package com.ngtiofack.go4lunch.api;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.ngtiofack.go4lunch.model.Go4LunchUsers;
+import com.ngtiofack.go4lunch.model.YourLunch;
 
 /**
  * Created by NG-TIOFACK on 2/16/2019.
@@ -22,8 +24,8 @@ public class Go4LunchUserHelper {
 
     // --- CREATE ---
 
-    public static Task<Void> createUser(String uid, String username, String urlPicture, boolean isConnected, String restaurantSel) {
-        Go4LunchUsers userToCreate = new Go4LunchUsers(uid, username, urlPicture, isConnected, restaurantSel);
+    public static Task<Void> createUser(String uid, String username, String urlPicture, boolean isConnected, YourLunch mYourLunch) {
+        Go4LunchUsers userToCreate = new Go4LunchUsers(uid, username, urlPicture, isConnected,mYourLunch);
         return Go4LunchUserHelper.getUsersCollection().document(uid).set(userToCreate);
     }
 
@@ -45,10 +47,6 @@ public class Go4LunchUserHelper {
 
     public static Task<Void> updateIsConnected(String uid, boolean isConnected) {
         return Go4LunchUserHelper.getUsersCollection().document(uid).update("isConnected", isConnected);
-    }
-
-    public static Task<Void> updateRestaurantSelected(String uid, String restaurantSelected) {
-        return Go4LunchUserHelper.getUsersCollection().document(uid).update("restaurantSelected", restaurantSelected);
     }
 
     // --- DELETE ---

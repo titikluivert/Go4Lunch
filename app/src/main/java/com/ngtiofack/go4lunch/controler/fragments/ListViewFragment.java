@@ -149,6 +149,7 @@ public class ListViewFragment extends Fragment {
             @Override
             public void onNext(RestaurantsModel results) {
                 updateUI(results.getResults());
+                
             }
 
             @Override

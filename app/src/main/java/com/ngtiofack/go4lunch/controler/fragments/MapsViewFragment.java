@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Build;
@@ -35,6 +37,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
@@ -44,6 +47,7 @@ import com.ngtiofack.go4lunch.R;
 import com.ngtiofack.go4lunch.api.RestaurantHelper;
 import com.ngtiofack.go4lunch.controler.activities.DetailedRestaurantActivity;
 import com.ngtiofack.go4lunch.model.RestaurantsModel;
+import com.ngtiofack.go4lunch.model.YourLunch;
 import com.ngtiofack.go4lunch.utils.CurrentLocation;
 import com.ngtiofack.go4lunch.utils.RestaurantsServiceStreams;
 import com.ngtiofack.go4lunch.utils.mainUtils;
@@ -55,6 +59,7 @@ import io.reactivex.observers.DisposableObserver;
 
 import static com.ngtiofack.go4lunch.utils.mainUtils.PROXIMITY_RADIUS;
 import static com.ngtiofack.go4lunch.utils.mainUtils.TYPE;
+import static com.ngtiofack.go4lunch.utils.mainUtils.bitmapDescriptorFromVector;
 
 public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
 
@@ -67,6 +72,7 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
     private View mView;
     private Marker m;
     private OnDataPass dataPasser;
+   // List<YourLunch> RestaurantStored = new ArrayList<>();
     private List<String> reselected = new ArrayList<>();
     private LocationCallback mLocationCallback = new LocationCallback() {
 
@@ -121,6 +127,8 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
         mMap = googleMap;
 
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(
+                getContext(), R.raw.style_google));
         LocationRequest locationRequest = new LocationRequest();
         locationRequest.setInterval(5000); // 5 secondes interval
         locationRequest.setFastestInterval(5000);
@@ -189,8 +197,7 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
                             photoWidth = 0;
                         }
 
-                        //Query firebaseSearchQuery = RestaurantHelper.getRestaurantCollection().child(placeName).orderByChild("userName");
-
+                        //RestaurantStored.add(new YourLunch(placeName, vicinity, photoHeight, photoWidth, photoRef, mainUtils.getNumOfStars(rating)));
 
                         MarkerOptions markerOptions = new MarkerOptions();
                         LatLng latLng = new LatLng(lat, lng);
@@ -200,15 +207,10 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
                         markerOptions.title(placeName + " : " + vicinity);
                         markerOptions.snippet(photoRef + ":" + photoHeight + ":" + photoWidth + ":" + rating);
 
-                        // Adding Marker to the Camera. // Adding colour to the marker
-                        // markerOptions.icon(getMarkerIcon("#FF8A50"));
-                        ///icon(BitmapDescriptorFactory.fromBitmap(changeBitmapColor(ContextCompat.getColor(getContext(), R.color.colorAccent))));
-                        // markerOptions.icon(bitmapDescriptorFromVector(getContext(), R.drawable.ic_restaurant_map_marker_));
-                        //icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_restaurant_black_24dp));
                         if (reselected.contains(placeName)) {
-                            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                            markerOptions.icon(bitmapDescriptorFromVector(getContext(), R.drawable.ic_restaurant_map_marker_sel_));
                         } else {
-                            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                            markerOptions.icon(bitmapDescriptorFromVector(getContext(), R.drawable.ic_restaurant_map_marker_));
                         }
                         // stop progressBar
                         passData(true);
@@ -221,7 +223,8 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
                             markerOptions.title("Current Position");
                             // markerOptions.snippet()
                             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-
+                            // saved Restaurants
+                          //  mainUtils.setDataFromSharedPreferences(getContext(),RestaurantStored);
                         }
                         //move map camera
 
@@ -283,28 +286,6 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
-    // method definition
-   /* private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorDrawableResourceId) {
-        Drawable background = ContextCompat.getDrawable(context, R.drawable.ic_place_black_24dp);
-        background.setBounds(0, 0, background.getIntrinsicWidth(), background.getIntrinsicHeight());
-        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorDrawableResourceId);
-        vectorDrawable.setBounds(40, 20, vectorDrawable.getIntrinsicWidth() + 40, vectorDrawable.getIntrinsicHeight() + 20);
-        Bitmap bitmap = Bitmap.createBitmap(background.getIntrinsicWidth(), background.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        background.draw(canvas);
-        vectorDrawable.draw(canvas);
-        return BitmapDescriptorFactory.fromBitmap(bitmap);
-    }*/
-
-    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
-        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
-        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
-        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        vectorDrawable.draw(canvas);
-        return BitmapDescriptorFactory.fromBitmap(bitmap);
-    }
-
     @Override
     public void onPause() {
         super.onPause();
@@ -325,7 +306,6 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
         super.onAttach(context);
         dataPasser = (OnDataPass) context;
     }
-
 
     private void checkIfARestaurantIsAlreadySelected() {
 

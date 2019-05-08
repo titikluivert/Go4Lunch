@@ -24,15 +24,19 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.ngtiofack.go4lunch.R;
+import com.ngtiofack.go4lunch.api.Go4LunchUserHelper;
 import com.ngtiofack.go4lunch.api.RestaurantHelper;
+import com.ngtiofack.go4lunch.model.Go4LunchUsers;
 import com.ngtiofack.go4lunch.model.RestaurantSelected;
+import com.ngtiofack.go4lunch.model.YourLunch;
 import com.ngtiofack.go4lunch.utils.mainUtils;
 
 import java.util.Objects;
 
 import static com.ngtiofack.go4lunch.api.Go4LunchUserHelper.getUser;
-import static com.ngtiofack.go4lunch.api.Go4LunchUserHelper.updateRestaurantSelected;
+import static com.ngtiofack.go4lunch.utils.mainUtils.LIKE;
 import static com.ngtiofack.go4lunch.utils.mainUtils.RESTAURANTISNOTSELECTED;
+import static com.ngtiofack.go4lunch.utils.mainUtils.RESTAURANT_LIKE;
 import static com.ngtiofack.go4lunch.utils.mainUtils.saveRestaurantSelected;
 import static com.ngtiofack.go4lunch.utils.mainUtils.saveYourLunch;
 
@@ -122,12 +126,16 @@ public class DetailedRestaurantActivity extends BaseActivity {
             glide.load(R.drawable.restaurant_default_img).apply(RequestOptions.centerInsideTransform()).into(imgRestaurantDetails);
         }
 
+        //YourLunch mYourLunch = new YourLunch(nameRestaurant,vicinity,photoHeight,photoWidth,photoReferenceUrl,numOfStars);
         uid = this.getCurrentUser().getUid();
 
         getUser(uid)
                 .addOnSuccessListener(documentSnapshot -> {
-                    restaurantSelectedStoreOnFirebase = documentSnapshot.getString("restaurantSelected");
-                    assert restaurantSelectedStoreOnFirebase != null;
+                    restaurantSelectedStoreOnFirebase = "";
+                     if(documentSnapshot !=null) {
+                        Go4LunchUsers go4LunchUsers = documentSnapshot.toObject(Go4LunchUsers.class);
+                        restaurantSelectedStoreOnFirebase = Objects.requireNonNull(go4LunchUsers).getYourLunch().getName();
+                    }
                     if (restaurantSelectedStoreOnFirebase.equals(nameRestaurant)) {
                         fab.setImageResource(R.drawable.check_restaurant);
                         writeNewUser(getCurrentUser().getDisplayName(), nameRestaurant, Objects.requireNonNull(getCurrentUser().getPhotoUrl()).toString());
@@ -139,18 +147,19 @@ public class DetailedRestaurantActivity extends BaseActivity {
 
             if (fabIsClicked) {
                 fab.setImageResource(R.drawable.check_restaurant);
-                updateRestaurantSelected(uid, nameRestaurant);
+                // createUser()
+                updateRestaurantSelectedParams(new YourLunch(nameRestaurant,vicinity,photoHeight,photoWidth,photoReferenceUrl,numOfStars));
                 dataChanged = false;
                 deleteNewUser();
                 writeNewUser(getCurrentUser().getDisplayName(), nameRestaurant, Objects.requireNonNull(getCurrentUser().getPhotoUrl()).toString());
-                saveYourLunch(getApplicationContext(), nameRestaurant, photoReferenceUrl, photoHeight, photoWidth, vicinity, numOfStars);
+                saveYourLunch(getApplicationContext(), nameRestaurant, vicinity, photoHeight, photoWidth, photoReferenceUrl, numOfStars);
                 fabIsClicked = false;
 
             } else {
                 fabIsClicked = true;
                 dataChanged = true;
-                updateRestaurantSelected(uid, "");
-                saveYourLunch(getApplicationContext(), RESTAURANTISNOTSELECTED, photoReferenceUrl, photoHeight, photoWidth, vicinity, numOfStars);
+                updateRestaurantSelectedParams(new YourLunch());
+                saveYourLunch(getApplicationContext(), RESTAURANTISNOTSELECTED, vicinity, photoHeight, photoWidth, photoReferenceUrl, numOfStars);
                 fab.setImageResource(R.drawable.please_select_restaurant);
                 deleteNewUser();
             }
@@ -164,8 +173,8 @@ public class DetailedRestaurantActivity extends BaseActivity {
                 .setAction("Action", null).show());
 
         likeRestaurant.setOnClickListener(v -> {
-            FirebaseFirestore.getInstance().collection("like").document(nameRestaurant).collection(uid).document(uid).set(true);
-            // Code here executes on main thread after user presses button
+            YourLunch likeRestaurant = new YourLunch(1);
+            FirebaseFirestore.getInstance().collection(LIKE).document(RESTAURANT_LIKE).collection(nameRestaurant).document(uid).set(likeRestaurant);
         });
 
         this.firebaseUserSearch(nameRestaurant);
@@ -242,4 +251,15 @@ public class DetailedRestaurantActivity extends BaseActivity {
         });
 
     }
+
+    private void updateRestaurantSelectedParams (YourLunch mYourLunch){
+
+        String urlPicture = (this.getCurrentUser().getPhotoUrl() != null) ? this.getCurrentUser().getPhotoUrl().toString() : null;
+        String username = this.getCurrentUser().getDisplayName();
+        String uid = this.getCurrentUser().getUid();
+        boolean isConnected = this.isCurrentUserLogged();
+
+        Go4LunchUserHelper.createUser(uid, username, urlPicture, isConnected,mYourLunch).addOnFailureListener(this.onFailureListener());
+    }
+
 }

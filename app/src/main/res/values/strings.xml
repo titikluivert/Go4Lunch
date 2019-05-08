@@ -39,6 +39,7 @@
     <string name="save_photoRef_key">pref_key_photoRef</string>
     <string name="save_number_of_stars_key">pref_key_number_of_stars</string>
     <string name="save_uid_key">pref_key_uid</string>
+    <string name="save_list_restaurantSelected_key">save_list_restaurantSelected_key</string>
     <string name="save_restaurantSelected_key">pref_restaurantSelected_uid</string>
 
 

@@ -1,9 +1,14 @@
 package com.ngtiofack.go4lunch.model;
 
+import android.widget.LinearLayout;
+
 public class RestaurantSelected {
 
     private String userName;
     private String urlPicture;
+
+
+
 
     public String getUrlPicture() {
         return urlPicture;
@@ -19,6 +24,8 @@ public class RestaurantSelected {
     public RestaurantSelected(String userName, String urlPicture) {
         this.userName = userName;
         this.urlPicture = urlPicture;
+
+
     }
 
     public String getUserName() {
@@ -28,5 +35,6 @@ public class RestaurantSelected {
     public void setUserName(String userName) {
         this.userName = userName;
     }
+
 
 }
