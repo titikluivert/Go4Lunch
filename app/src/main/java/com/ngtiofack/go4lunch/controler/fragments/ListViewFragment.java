@@ -23,6 +23,7 @@ import com.ngtiofack.go4lunch.view.RestaurantsAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -117,7 +118,6 @@ public class ListViewFragment extends Fragment {
         // 3.4 - Set layout manager to position the items
         this.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
-
     // 1 - Configure item click on RecyclerView
     private void configureOnClickRecyclerView() {
         ItemClickSupport.addTo(recyclerView, R.layout.fragment_item_list_view)
@@ -137,7 +137,6 @@ public class ListViewFragment extends Fragment {
                     }
                     myIntent.putExtra(getString(R.string.photosReference), photoUrl);
                     myIntent.putExtra(getString(R.string.number_of_stars), response.getRating() == null ? 0 : mainUtils.getNumOfStars(response.getRating()));
-                    //myIntent.putExtra(getString(R.string.articleUrl), response.getWebUrl());
                     startActivity(myIntent);
                 });
     }
@@ -154,12 +153,12 @@ public class ListViewFragment extends Fragment {
 
             @Override
             public void onError(Throwable e) {
-                Log.e("", "There is an error" + e);
+                Log.e("", Objects.requireNonNull(getContext()).getString(R.string.there_is_an_error) + e);
             }
 
             @Override
             public void onComplete() {
-                Log.e("", "on complete is running");
+                Log.e("", Objects.requireNonNull(getContext()).getString(R.string.on_complete_is_running));
             }
         });
 

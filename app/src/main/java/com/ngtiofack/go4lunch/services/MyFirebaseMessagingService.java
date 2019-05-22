@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.ngtiofack.go4lunch.utils.mainUtils.RESTAURANTISNOTSELECTED;
+import static com.ngtiofack.go4lunch.utils.mainUtils.RESTAURANT_IS_NOTSELECTED;
 import static com.ngtiofack.go4lunch.utils.mainUtils.getUserId;
 import static com.ngtiofack.go4lunch.utils.mainUtils.getYourLunch;
 
@@ -48,7 +48,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
     }
 
-    // ---
     private void sendVisualNotification() {
 
         StringBuilder colleaguesStr = new StringBuilder();
@@ -96,7 +95,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         // 7 - Show notification
         int NOTIFICATION_ID = 7;
-        String NOTIFICATION_TAG = "FIREBASEOC";
+        String NOTIFICATION_TAG = "FIREBASE_GO4LUNCH";
         notificationManager.notify(NOTIFICATION_TAG, NOTIFICATION_ID, notificationBuilder.build());
     }
 
@@ -108,7 +107,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Iterable<DataSnapshot> keyALL = dataSnapshot.getChildren();
-                if (!mYourLunch.getName().equals(RESTAURANTISNOTSELECTED)) {
+                if (!mYourLunch.getName().equals(RESTAURANT_IS_NOTSELECTED)) {
                     for (DataSnapshot keyRestaurantName : keyALL) {
                         Iterable<DataSnapshot> keysFinal = keyRestaurantName.getChildren();
                         if (Objects.equals(keyRestaurantName.getKey(), mYourLunch.getName())) {

@@ -20,9 +20,7 @@ public class SettingsActivity extends AppCompatActivity {
                 .beginTransaction()
                 .replace(R.id.settings, new SettingsFragment())
                 .commit();
-
     }
-
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
         @Override
@@ -41,7 +39,7 @@ public class SettingsActivity extends AppCompatActivity {
         if (actionBar != null) {
             // Show the Up button in the action bar.
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle("Settings");
+            actionBar.setTitle(this.getString(R.string.settings_title));
         }
     }
 }

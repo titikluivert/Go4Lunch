@@ -34,7 +34,6 @@ public class WorkmatesViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.BtnChat)
     ImageButton chatButton;
 
-
     public WorkmatesViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);

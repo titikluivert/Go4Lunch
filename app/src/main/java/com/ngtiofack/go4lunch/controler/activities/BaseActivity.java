@@ -1,10 +1,8 @@
 package com.ngtiofack.go4lunch.controler.activities;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.ViewGroup;
@@ -20,8 +18,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.ngtiofack.go4lunch.R;
 
 public abstract class BaseActivity extends AppCompatActivity {
-
-    //private ProgressDialog mProgressDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,6 +35,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected OnFailureListener onFailureListener() {
         return e -> showToast(getString(R.string.error_unknown_error));
     }
+
     protected void showProgress(String msg) {
 
         int llPadding = 50;
@@ -85,24 +82,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-
-   /* protected void dismissProgress() {
-        if (mProgressDialog != null) {
-            mProgressDialog.dismiss();
-            mProgressDialog = null;
-        }
-    }*/
-
     protected void showToast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
 
-    protected void showAlert(String msg) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getResources().getString(R.string.app_name))
-                .setMessage(msg)
-                .setCancelable(false)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton("OK", (dialogInterface, i) -> dialogInterface.dismiss()).create().show();
-    }
 }

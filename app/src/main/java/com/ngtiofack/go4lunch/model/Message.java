@@ -24,14 +24,6 @@ public class Message {
 
     }
 
-    public Message(String message, String urlImage, Go4LunchUsers userSender) {
-        this.message = message;
-        this.urlImage = urlImage;
-        this.userSender = userSender;
-
-    }
-
-
     // --- GETTERS ---
     public String getMessage() { return message; }
     @ServerTimestamp

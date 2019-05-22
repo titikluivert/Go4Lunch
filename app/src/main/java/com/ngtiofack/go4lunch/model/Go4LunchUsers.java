@@ -43,7 +43,6 @@ public class Go4LunchUsers {
         return username;
     }
 
-
     public YourLunch getYourLunch() {
         return yourLunch;
     }

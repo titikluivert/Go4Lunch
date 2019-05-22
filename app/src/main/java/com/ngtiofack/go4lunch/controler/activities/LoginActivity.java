@@ -4,19 +4,14 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import com.google.android.material.snackbar.Snackbar;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.RelativeLayout;
-
 import androidx.core.content.ContextCompat;
-
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.jgabrielfreitas.core.BlurImageView;
 import com.ngtiofack.go4lunch.R;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Objects;
 
 public class LoginActivity extends BaseActivity {
@@ -45,7 +40,6 @@ public class LoginActivity extends BaseActivity {
         blurImageView.setBlur(5);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDarkDyn));
         }
 
@@ -55,11 +49,11 @@ public class LoginActivity extends BaseActivity {
         startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
-                        .setAvailableProviders(Arrays.asList(providers)) // SUPPORT GOOGLE AND FACEBOOK
+                        .setAvailableProviders(Collections.singletonList(providers)) // SUPPORT GOOGLE AND FACEBOOK
                         .setIsSmartLockEnabled(false, true)
                         .build(),
                 RC_SIGN_IN);
-        showProgress("Signing in...");
+        showProgress(this.getString(R.string.sign_in));
     }
 
     @Override
@@ -68,28 +62,22 @@ public class LoginActivity extends BaseActivity {
         // 4 - Handle SignIn Activity response on activity result
         this.handleResponseAfterSignIn(requestCode, resultCode, data);
     }
-
     // 3 - Method that handles response after SignIn Activity close
-
     private void handleResponseAfterSignIn(int requestCode, int resultCode, Intent data) {
 
         IdpResponse response = IdpResponse.fromResultIntent(data);
 
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == RESULT_OK) { // SUCCESS
-                //showSnackBar(getWindow().getDecorView().getRootView(), getString(R.string.connection_succeed));
                 onLoginSuccess();
                 Snackbar.make(getWindow().getDecorView().getRootView(), R.string.connection_succeed, Snackbar.LENGTH_LONG).setAction("Action", null).show();
             } else { // ERRORS
                 if (response == null) {
                     Snackbar.make(getWindow().getDecorView().getRootView(), R.string.error_authentication_canceled, Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                    // showSnackBar(getWindow().getDecorView().getRootView(), getString(R.string.error_authentication_canceled));
                 } else if (Objects.requireNonNull(response.getError()).getErrorCode() == ErrorCodes.NO_NETWORK) {
                     Snackbar.make(getWindow().getDecorView().getRootView(), R.string.error_no_internet, Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                    // showSnackBar(getWindow().getDecorView().getRootView(), getString(R.string.error_no_internet));
                 } else if (response.getError().getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
                     Snackbar.make(getWindow().getDecorView().getRootView(), R.string.error_unknown_error, Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                    //showSnackBar(getWindow().getDecorView().getRootView(), getString(R.string.error_unknown_error));
                 }
             }
         }

@@ -20,13 +20,7 @@ public interface RetrofitMapsServices {
      * Retrofit get annotation with our URL
      * And our method that will return us details of student.
      */
-    /*
-     * Retrofit get annotation with our URL
-     * And our method that will return us details of student.
-     */
-
-
-    Retrofit retrofit = new Retrofit.Builder()
+     Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(mainUtils.url)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())

@@ -15,11 +15,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 import com.ngtiofack.go4lunch.R;
 import com.ngtiofack.go4lunch.api.Go4LunchUserHelper;
@@ -121,8 +118,7 @@ public class ChatsActivity extends BaseActivity implements ChatAdapter.Listener 
         setSupportActionBar(toolbar);
     }
 
-    public void onClickAddFile() {
-    }
+    public void onClickAddFile() { }
 
     public void onClickSendMessage() {
         // 1 - Check if text field is not empty and current user properly downloaded from Firestore

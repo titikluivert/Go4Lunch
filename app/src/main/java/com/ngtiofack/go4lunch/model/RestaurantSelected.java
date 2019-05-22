@@ -1,13 +1,9 @@
 package com.ngtiofack.go4lunch.model;
 
-import android.widget.LinearLayout;
-
 public class RestaurantSelected {
 
     private String userName;
     private String urlPicture;
-
-
 
 
     public String getUrlPicture() {

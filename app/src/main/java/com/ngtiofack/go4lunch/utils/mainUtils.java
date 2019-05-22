@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 
@@ -13,19 +11,12 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.ngtiofack.go4lunch.R;
 import com.ngtiofack.go4lunch.model.YourLunch;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by NG-TIOFACK on 2/13/2019.
  */
-
 
 public class mainUtils {
 
@@ -36,9 +27,9 @@ public class mainUtils {
     public static  final String RESTAURANT_LIKE = "Restaurants";
     public static  final String LIKE = "like";
 
-    public static final String RESTAURANTISNOTSELECTED = "No restaurant is selected";
+    public static final String RESTAURANT_IS_NOTSELECTED = "No restaurant is selected";
     public static final String COLLECTION_NAME = "messages";
-    public static final String RESTAURANTSELECTED = "restaurantSelected";
+    public static final String RESTAURANT_SELECTED = "restaurantSelected";
 
 
     public static int getDistanceToRestaurants(double latA, double longA, double latB, double longB) {
@@ -92,7 +83,7 @@ public class mainUtils {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
 
-        return new YourLunch(sharedPreferences.getString(ctx.getString(R.string.save_restaurantName_key), RESTAURANTISNOTSELECTED),
+        return new YourLunch(sharedPreferences.getString(ctx.getString(R.string.save_restaurantName_key), RESTAURANT_IS_NOTSELECTED),
                 sharedPreferences.getString(ctx.getString(R.string.save_vicinity_key), ""),
                 sharedPreferences.getInt(ctx.getString(R.string.save_photoHeight_key), 0),
                 sharedPreferences.getInt(ctx.getString(R.string.save_photoWidth_key), 0),
@@ -110,18 +101,6 @@ public class mainUtils {
     public static String getUserId(Context ctx) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
         return sharedPreferences.getString(ctx.getString(R.string.save_uid_key), "");
-    }
-
-    public static  void saveRestaurantSelected (Context context, String restaurantSelected ) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(context.getString(R.string.save_restaurantSelected_key), restaurantSelected);
-        editor.apply();
-    }
-
-    public static String getRestaurantSelected(Context ctx) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return sharedPreferences.getString(ctx.getString(R.string.save_restaurantSelected_key), "");
     }
 
     public static long convertHexToDecimal(String hexReceiverId, String hexSenderId){

@@ -4,11 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,13 +13,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -34,7 +27,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -47,16 +39,13 @@ import com.ngtiofack.go4lunch.R;
 import com.ngtiofack.go4lunch.api.RestaurantHelper;
 import com.ngtiofack.go4lunch.controler.activities.DetailedRestaurantActivity;
 import com.ngtiofack.go4lunch.model.RestaurantsModel;
-import com.ngtiofack.go4lunch.model.YourLunch;
 import com.ngtiofack.go4lunch.utils.CurrentLocation;
 import com.ngtiofack.go4lunch.utils.RestaurantsServiceStreams;
 import com.ngtiofack.go4lunch.utils.mainUtils;
-
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Objects;
 import io.reactivex.observers.DisposableObserver;
-
 import static com.ngtiofack.go4lunch.utils.mainUtils.PROXIMITY_RADIUS;
 import static com.ngtiofack.go4lunch.utils.mainUtils.TYPE;
 import static com.ngtiofack.go4lunch.utils.mainUtils.bitmapDescriptorFromVector;
@@ -78,18 +67,13 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
 
         @Override
         public void onLocationResult(LocationResult locationResult) {
-
             for (Location location : locationResult.getLocations()) {
-
-                Log.i("MapsActivity", "Location: " + location.getLatitude() + " " + location.getLongitude());
                 if (m != null) {
                     m.remove();
                 }
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
-
                 checkIfARestaurantIsAlreadySelected();
-
                 buildRetrofitAndGetResponse(location);
             }
         }
@@ -109,7 +93,6 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
         mView = inflater.inflate(R.layout.fragment_maps, container, false);
         return mView;
     }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -128,7 +111,7 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
 
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(
-                getContext(), R.raw.style_google));
+                Objects.requireNonNull(getContext()), R.raw.style_google));
         LocationRequest locationRequest = new LocationRequest();
         locationRequest.setInterval(5000); // 5 secondes interval
         locationRequest.setFastestInterval(5000);
@@ -146,7 +129,6 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
             mFusedLocationClient.requestLocationUpdates(locationRequest, mLocationCallback, Looper.myLooper());
             mMap.setMyLocationEnabled(true);
         }
-
     }
 
     @Override
@@ -167,7 +149,6 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void buildRetrofitAndGetResponse(final Location mLocation) {
-
         DisposableObserver<RestaurantsModel> disposable = RestaurantsServiceStreams.streamFetchRestaurantsItems(TYPE, latitude + "," + longitude, PROXIMITY_RADIUS).subscribeWith(new DisposableObserver<RestaurantsModel>() {
 
             @Override
@@ -197,8 +178,6 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
                             photoWidth = 0;
                         }
 
-                        //RestaurantStored.add(new YourLunch(placeName, vicinity, photoHeight, photoWidth, photoRef, mainUtils.getNumOfStars(rating)));
-
                         MarkerOptions markerOptions = new MarkerOptions();
                         LatLng latLng = new LatLng(lat, lng);
                         // Position of Marker on Map
@@ -220,11 +199,9 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
                             latLng = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
                             //MarkerOptions markerOptions = new MarkerOptions();
                             markerOptions.position(latLng);
-                            markerOptions.title("Current Position");
+                            markerOptions.title(Objects.requireNonNull(getContext()).getString(R.string.current_location));
                             // markerOptions.snippet()
                             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-                            // saved Restaurants
-                          //  mainUtils.setDataFromSharedPreferences(getContext(),RestaurantStored);
                         }
                         //move map camera
 
@@ -267,23 +244,18 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
                         });
                     }
                 } catch (Exception e) {
-                    Log.d("onResponse", "There is an error");
                     e.printStackTrace();
                 }
-
             }
-
             @Override
             public void onError(Throwable e) {
-                Log.e("", "There is an error" + e);
+                Log.e("", Objects.requireNonNull(getContext()).getString(R.string.there_is_an_error)+ e);
             }
-
             @Override
             public void onComplete() {
-                Log.e("", "on complete is running");
+                Log.e("", Objects.requireNonNull(getContext()).getString(R.string.on_complete_is_running));
             }
         });
-
     }
 
     @Override

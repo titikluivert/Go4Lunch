@@ -35,9 +35,8 @@ import java.util.Objects;
 
 import static com.ngtiofack.go4lunch.api.Go4LunchUserHelper.getUser;
 import static com.ngtiofack.go4lunch.utils.mainUtils.LIKE;
-import static com.ngtiofack.go4lunch.utils.mainUtils.RESTAURANTISNOTSELECTED;
+import static com.ngtiofack.go4lunch.utils.mainUtils.RESTAURANT_IS_NOTSELECTED;
 import static com.ngtiofack.go4lunch.utils.mainUtils.RESTAURANT_LIKE;
-import static com.ngtiofack.go4lunch.utils.mainUtils.saveRestaurantSelected;
 import static com.ngtiofack.go4lunch.utils.mainUtils.saveYourLunch;
 
 public class DetailedRestaurantActivity extends BaseActivity {
@@ -57,6 +56,7 @@ public class DetailedRestaurantActivity extends BaseActivity {
     int photoHeight;
     int photoWidth;
     private RecyclerView mResultList;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -159,17 +159,16 @@ public class DetailedRestaurantActivity extends BaseActivity {
                 fabIsClicked = true;
                 dataChanged = true;
                 updateRestaurantSelectedParams(new YourLunch());
-                saveYourLunch(getApplicationContext(), RESTAURANTISNOTSELECTED, vicinity, photoHeight, photoWidth, photoReferenceUrl, numOfStars);
+                saveYourLunch(getApplicationContext(), RESTAURANT_IS_NOTSELECTED, vicinity, photoHeight, photoWidth, photoReferenceUrl, numOfStars);
                 fab.setImageResource(R.drawable.please_select_restaurant);
                 deleteNewUser();
             }
-            saveRestaurantSelected(getApplicationContext(), nameRestaurant);
         });
 
-        website.setOnClickListener(v -> Snackbar.make(v, "No website available", Snackbar.LENGTH_LONG)
+        website.setOnClickListener(v -> Snackbar.make(v, this.getString(R.string.no_website_available), Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show());
 
-        phoneNum.setOnClickListener(v -> Snackbar.make(v, "No phone number available", Snackbar.LENGTH_LONG)
+        phoneNum.setOnClickListener(v -> Snackbar.make(v, this.getString(R.string.phone_number_not_available), Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show());
 
         likeRestaurant.setOnClickListener(v -> {
@@ -186,7 +185,7 @@ public class DetailedRestaurantActivity extends BaseActivity {
         FirebaseRecyclerAdapter<RestaurantSelected, UsersViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<RestaurantSelected, UsersViewHolder>(
 
                 RestaurantSelected.class,
-                R.layout.fragment_item_list_workmates,
+                R.layout.item_list_workmates,
                 UsersViewHolder.class,
                 firebaseSearchQuery
         ) {
@@ -234,7 +233,6 @@ public class DetailedRestaurantActivity extends BaseActivity {
                 for (DataSnapshot key : keys) {
                     Iterable<DataSnapshot> keys2 = key.getChildren();
                     for (DataSnapshot key0 : keys2) {
-                        // RestaurantSelected restaurantSelected = key0.getValue(RestaurantSelected.class);
                         if (!nameRestaurant.equals(key.getKey()) || dataChanged) {
                             if (Objects.requireNonNull(key0.getKey()).equals(uid))
                                 RestaurantHelper.getRestaurantCollection().child(Objects.requireNonNull(key.getKey())).child(uid).removeValue();
