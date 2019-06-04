@@ -1,9 +1,9 @@
 package com.ngtiofack.go4lunch.controler.activities;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,9 +22,16 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.RectangularBounds;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
@@ -42,23 +49,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static com.ngtiofack.go4lunch.utils.mainUtils.RESTAURANT_IS_NOTSELECTED;
+import static com.ngtiofack.go4lunch.utils.mainUtils.RESTAURANT_IS_NOT_SELECTED;
 import static com.ngtiofack.go4lunch.utils.mainUtils.getYourLunch;
 import static com.ngtiofack.go4lunch.utils.mainUtils.saveUserId;
 
-//import com.google.android.gms.common.api.ApiException;
-/*import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.net.FetchPlaceRequest;
-import com.google.android.libraries.places.api.net.PlacesClient;*/
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, MapsViewFragment.OnDataPass {
 
     private CurrentLocation currentLocation = new CurrentLocation();
+    private SaveCurrentLocation currentLatLng;
     private int AUTOCOMPLETE_REQUEST_CODE = 1;
-
-    // Creating identifier to identify REST REQUEST (Update username)
-    private static final int UPDATE_USERNAME = 30;
 
     ImageView imageViewProfile;
     TextView textInputEditTextUsername;
@@ -68,16 +68,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     YourLunch mYourLunch;
     // 2 - Identify each Http Request
     private static final int SIGN_OUT_TASK = 10;
-
-    // Define a Place ID.
-   /* String placeId = "INSERT_PLACE_ID_HERE";
     PlacesClient placesClient;
-    // Specify the fields to return.
-    List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
-    // Construct a request object, passing the place ID and fields array.
-    FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields)
-            .build();*/
-
     //Drawer Layout
     private DrawerLayout drawerLayout;
     // define an ActionBarDrawerToggle
@@ -94,7 +85,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 break;
             case R.id.navigation_dashboard:
                 Objects.requireNonNull(getSupportActionBar()).setTitle(getApplicationContext().getString(R.string.im_hungry));
-                SaveCurrentLocation currentLatLng = currentLocation.getSaveLatLng(MainActivity.this);
                 selectedFragment = ListViewFragment.newInstance(String.valueOf(currentLatLng.getLatitude()), String.valueOf(currentLatLng.getLongitude()));
                 break;
             case R.id.navigation_notifications:
@@ -112,12 +102,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.configureToolbar();
+        currentLatLng = currentLocation.getSaveLatLng(this);
 
+        // Initialize Places.
+        Places.initialize(getApplicationContext(), getString(R.string.google_maps_key));
+        //Create a new Places client instance.
+        placesClient = Places.createClient(this);
 
-      /* // Initialize Places.
-        Place.initialize(getApplicationContext(), "AIzaSyCXBKZ5tT07uT8XdXsUuAMsVkV-Uxs70E8");
-        // Create a new Places client instance.
-        placesClient = Places.createClient(this);*/
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -159,19 +150,20 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         //3 - Handle actions on menu items
-        if (item.getItemId() == R.id.menu_activity_main_search) {// Add a listener to handle the response.
-
-
-// Set the fields to specify which types of place data to
-// return after the user has made a selection.
-            List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
-// Start the autocomplete intent.
+        if (item.getItemId() == R.id.menu_activity_main_search) {
+            // Create a new token for the autocomplete session. Pass this to FindAutocompletePredictionsRequest,
+            // and once again when the user makes a selection (for example when calling fetchPlace()).
+            List<Place.Field> fields = Arrays.asList(Place.Field
+                    .ID, Place.Field.NAME, Place.Field.TYPES);
+            // Start the autocomplete intent.
             Intent intent = new Autocomplete.IntentBuilder(
-                    AutocompleteActivityMode.FULLSCREEN, fields)
+                    AutocompleteActivityMode.OVERLAY, fields)
+                    .setLocationRestriction(RectangularBounds.newInstance(
+                            new LatLng(currentLatLng.getLatitude(), currentLatLng.getLongitude()),
+                            new LatLng(currentLatLng.getLatitude() + 0.03, currentLatLng.getLongitude() + 0.03)))
+                    .setTypeFilter(TypeFilter.ESTABLISHMENT)
                     .build(this);
             startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
-
-
             return true;
         }
         if (mToggle.onOptionsItemSelected(item)) {
@@ -188,7 +180,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
                 mYourLunch = getYourLunch(this);
 
-                if (mYourLunch.getName().equals(RESTAURANT_IS_NOTSELECTED)) {
+                if (mYourLunch.getName().equals(RESTAURANT_IS_NOT_SELECTED)) {
 
                     Toast.makeText(this, "No restaurant was selected", Toast.LENGTH_SHORT).show();
                 } else {
@@ -276,20 +268,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }
     }
 
-    // 3 - Update User Username
-    private void updateUsernameInFirebase() {
-
-        //this.progressBar.setVisibility(View.VISIBLE);
-        String username = this.textInputEditTextUsername.getText().toString();
-
-        if (this.getCurrentUser() != null) {
-            if (!username.isEmpty() && !username.equals("user not found")) {
-                Go4LunchUserHelper.updateUsername(username, this.getCurrentUser().getUid()).addOnFailureListener(this.onFailureListener()).addOnSuccessListener(this.updateUIAfterRESTRequestsCompleted(UPDATE_USERNAME));
-            }
-        }
-    }
-
-    // 2 - Update User Mentor (is or not)
+    // 2 - Update : connected (is or not)
     private void updateConnected(boolean connectionStatus) {
         if (this.getCurrentUser() != null) {
             Go4LunchUserHelper.updateIsConnected(this.getCurrentUser().getUid(), connectionStatus).addOnFailureListener(this.onFailureListener());
@@ -310,6 +289,27 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = Autocomplete.getPlaceFromIntent(data);
+                if (Objects.requireNonNull(place.getTypes()).contains(Place.Type.RESTAURANT)) {
+                    Log.i("AutoComplete", "Place: " + place.getName() + ", " + place.getAddress() + ", " + place.getTypes());
+                }
+            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                // TODO: Handle the error.
+                Status status = Autocomplete.getStatusFromIntent(data);
+                Log.i("AutoComplete", status.getStatusMessage());
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+                Log.i("AutoComplete", "is cancelled");
+            }
+        }
+    }
+
+
+    @Override
     public void onDataPass(boolean data) {
         if (data) {
             relProgress.setVisibility(View.GONE);
@@ -321,4 +321,5 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         super.onPause();
         saveUserId(this, this.getCurrentUser().getUid());
     }
+
 }

@@ -8,7 +8,6 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,7 +60,6 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
     private View mView;
     private Marker m;
     private OnDataPass dataPasser;
-   // List<YourLunch> RestaurantStored = new ArrayList<>();
     private List<String> reselected = new ArrayList<>();
     private LocationCallback mLocationCallback = new LocationCallback() {
 
@@ -113,8 +111,8 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(
                 Objects.requireNonNull(getContext()), R.raw.style_google));
         LocationRequest locationRequest = new LocationRequest();
-        locationRequest.setInterval(5000); // 5 secondes interval
-        locationRequest.setFastestInterval(5000);
+        locationRequest.setInterval(1200000); // 5 secondes interval
+        locationRequest.setFastestInterval(1200000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -249,11 +247,11 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
             }
             @Override
             public void onError(Throwable e) {
-                Log.e("", Objects.requireNonNull(getContext()).getString(R.string.there_is_an_error)+ e);
+              //  Log.e("", Objects.requireNonNull(getContext()).getString(R.string.there_is_an_error)+ e);
             }
             @Override
             public void onComplete() {
-                Log.e("", Objects.requireNonNull(getContext()).getString(R.string.on_complete_is_running));
+              //  Log.e("", Objects.requireNonNull(getContext()).getString(R.string.on_complete_is_running));
             }
         });
     }

@@ -27,7 +27,7 @@ public class mainUtils {
     public static  final String RESTAURANT_LIKE = "Restaurants";
     public static  final String LIKE = "like";
 
-    public static final String RESTAURANT_IS_NOTSELECTED = "No restaurant is selected";
+    public static final String RESTAURANT_IS_NOT_SELECTED = "No restaurant is selected";
     public static final String COLLECTION_NAME = "messages";
     public static final String RESTAURANT_SELECTED = "restaurantSelected";
 
@@ -83,7 +83,7 @@ public class mainUtils {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
 
-        return new YourLunch(sharedPreferences.getString(ctx.getString(R.string.save_restaurantName_key), RESTAURANT_IS_NOTSELECTED),
+        return new YourLunch(sharedPreferences.getString(ctx.getString(R.string.save_restaurantName_key), RESTAURANT_IS_NOT_SELECTED),
                 sharedPreferences.getString(ctx.getString(R.string.save_vicinity_key), ""),
                 sharedPreferences.getInt(ctx.getString(R.string.save_photoHeight_key), 0),
                 sharedPreferences.getInt(ctx.getString(R.string.save_photoWidth_key), 0),
@@ -134,7 +134,7 @@ public class mainUtils {
         return (long)(decimal + decimal2);
     }
 
-    private static  String convertStringToHex(String str){
+    public static  String convertStringToHex(String str){
 
         char[] chars = str.toCharArray();
 
@@ -154,6 +154,8 @@ public class mainUtils {
         vectorDrawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
+
+
 
 }
 

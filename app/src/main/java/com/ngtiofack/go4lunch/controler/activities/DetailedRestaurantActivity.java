@@ -35,7 +35,7 @@ import java.util.Objects;
 
 import static com.ngtiofack.go4lunch.api.Go4LunchUserHelper.getUser;
 import static com.ngtiofack.go4lunch.utils.mainUtils.LIKE;
-import static com.ngtiofack.go4lunch.utils.mainUtils.RESTAURANT_IS_NOTSELECTED;
+import static com.ngtiofack.go4lunch.utils.mainUtils.RESTAURANT_IS_NOT_SELECTED;
 import static com.ngtiofack.go4lunch.utils.mainUtils.RESTAURANT_LIKE;
 import static com.ngtiofack.go4lunch.utils.mainUtils.saveYourLunch;
 
@@ -159,7 +159,7 @@ public class DetailedRestaurantActivity extends BaseActivity {
                 fabIsClicked = true;
                 dataChanged = true;
                 updateRestaurantSelectedParams(new YourLunch());
-                saveYourLunch(getApplicationContext(), RESTAURANT_IS_NOTSELECTED, vicinity, photoHeight, photoWidth, photoReferenceUrl, numOfStars);
+                saveYourLunch(getApplicationContext(), RESTAURANT_IS_NOT_SELECTED, vicinity, photoHeight, photoWidth, photoReferenceUrl, numOfStars);
                 fab.setImageResource(R.drawable.please_select_restaurant);
                 deleteNewUser();
             }

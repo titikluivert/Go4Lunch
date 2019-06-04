@@ -26,7 +26,7 @@ public interface RetrofitMapsServices {
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build();
 
-    @GET("api/place/nearbysearch/json?sensor=true&key=AIzaSyCXBKZ5tT07uT8XdXsUuAMsVkV-Uxs70E8")
+    @GET("api/place/nearbysearch/json?sensor=true&key=AIzaSyAEwrcgezK5dT7YYVWph2Z3K6CJB497Sa4")
     Observable<RestaurantsModel> getNearbyPlaces(
             @Query("type") String type,
             @Query("location") String location,

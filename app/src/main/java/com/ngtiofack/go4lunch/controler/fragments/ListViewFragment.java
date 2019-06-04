@@ -1,5 +1,6 @@
 package com.ngtiofack.go4lunch.controler.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.ngtiofack.go4lunch.R;
@@ -20,7 +22,6 @@ import com.ngtiofack.go4lunch.utils.ItemClickSupport;
 import com.ngtiofack.go4lunch.utils.RestaurantsServiceStreams;
 import com.ngtiofack.go4lunch.utils.mainUtils;
 import com.ngtiofack.go4lunch.view.RestaurantsAdapter;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -42,13 +43,13 @@ public class ListViewFragment extends Fragment {
     // 1 - Declare the SwipeRefreshLayout
     @BindView(R.id.list_view__swipe_container)
     SwipeRefreshLayout swipeRefreshLayout;
-
     //FOR DATA
     private Disposable disposable;
 
     private String mParam1;
     private String mParam2;
     private String photoUrl;
+
     // 2 - Declare list of results (MostPopular) & Adapter
     private List<RestaurantsModel.Result> myResultsList;
     private RestaurantsAdapter adapter;
@@ -164,6 +165,7 @@ public class ListViewFragment extends Fragment {
 
     }
 
+
     private void updateUI(List<RestaurantsModel.Result> results) {
         // 3 - Stop refreshing and clear actual list of results
         swipeRefreshLayout.setRefreshing(false);
@@ -171,5 +173,6 @@ public class ListViewFragment extends Fragment {
         myResultsList.addAll(results);
         adapter.setRestaurantList(myResultsList);
     }
+
 }
 

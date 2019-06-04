@@ -37,14 +37,6 @@ public class Go4LunchUserHelper {
 
     // --- UPDATE ---
 
-    public static Task<Void> updateUsername(String username, String uid) {
-        return Go4LunchUserHelper.getUsersCollection().document(uid).update("username", username);
-    }
-
-    public static Task<Void> updateUrlPicture(String urlPicture, String uid) {
-        return Go4LunchUserHelper.getUsersCollection().document(uid).update("urlPicture", urlPicture);
-    }
-
     public static Task<Void> updateIsConnected(String uid, boolean isConnected) {
         return Go4LunchUserHelper.getUsersCollection().document(uid).update("isConnected", isConnected);
     }

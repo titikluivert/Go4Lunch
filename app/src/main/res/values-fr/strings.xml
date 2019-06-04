@@ -1,33 +1,33 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Go4Lunch</string>
-    <string name="sign_in_with_facebook">Sign in with facebook</string>
-    <string name="sign_in_with_google">Sign in with google</string>
-    <string name="title_activity_main2">I\'m Hungry!</string>
+    <string name="sign_in_with_facebook">Connectez-vous avec Facebook</string>
+    <string name="sign_in_with_google">Connectez-vous avec google</string>
+    <string name="title_activity_main2">J\'ai faim!</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="searchMenu">search_menu</string>
 
-    <string name="connection_succeed">Connection Succeed</string>
-    <string name="error_authentication_canceled">Error authentication canceled</string>
-    <string name="error_no_internet">error no internet</string>
-    <string name="error_unknown_error">error unknown error</string>
+    <string name="connection_succeed">Connexion réussie</string>
+    <string name="error_authentication_canceled">Erreur authentification annulée</string>
+    <string name="error_no_internet">Erreur pas internet</string>
+    <string name="error_unknown_error">Erreur erreur inconnue</string>
 
 
     <string name="open">Open</string>
     <string name="close">Close</string>
-    <string name="your_lunch">YOUR LUNCH</string>
-    <string name="settings">SETTINGS</string>
-    <string name="logout">LOGOUT</string>
-    <string name="map_view">Map View</string>
-    <string name="list_view">List View</string>
-    <string name="workmates">Workmates</string>
+    <string name="your_lunch">TON DÉJEUNER</string>
+    <string name="settings">RÉGLAGES</string>
+    <string name="logout">Déconnection</string>
+    <string name="map_view">Vue de carte</string>
+    <string name="list_view">Vue en Liste</string>
+    <string name="workmates">Collègues</string>
     <string name="title_activity_maps">Map</string>
-    <string name="info_user_name_not_found">info user name not found</string>
+    <string name="info_user_name_not_found">info nom d\'utilisateur non trouvé</string>
+
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
-
     <string name="save_lat__key">pref_key_lat</string>
     <string name="save_Long__key">pref_key_lng</string>
     <string name="save_vicinity_key">pref_key_vicinity</string>
@@ -43,7 +43,7 @@
     <string name="save_restaurantSelected_key">pref_restaurantSelected_uid</string>
 
 
-    <string name="info_email_not_found">info email not found</string>
+    <string name="info_email_not_found">info email non trouvé</string>
     <string name="vicinity">vicinity</string>
     <string name="photosReference">photosReference</string>
     <string name="name_restaurant">name_restaurant</string>
@@ -58,35 +58,18 @@
     <!-- Example settings for Notifications -->
     <string name="pref_header_notifications">Notifications</string>
 
-    <string name="pref_title_new_message_notifications">New message notifications</string>
+    <string name="pref_title_new_message_notifications">Notifications des nouveaux messages</string>
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="title_activity_settings">Settings</string>
     <string name="pref_title_ringtone">Ringtone</string>
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="action_settings">Settings</string>
-    <string name="default_gallery_storage">My Videos</string>
-    <string name="title_auto_upload">Auto upload</string>
-    <string name="summary_upload_over_wifi">Upload the videos when wifi is available</string>
-    <string name="title_upload_quality">Upload Quality</string>
-    <string name="summary_upload_video_quality">Specify video quality for uploads</string>
     <string name="pref_title_notifications">Notifications</string>
-    <string name="summary_choose_ringtone">Choose notification sound</string>
-    <string name="pref_header_about">About</string>
-    <string name="summary_about">Application Go4Lunch, which allows you to find and decide where to eat</string>
+    <string name="pref_header_about">A Propos</string>
+    <string name="summary_about">Application Go4Lunch, qui vous permet de trouver et de décider où manger</string>
     <string name="app_version">3.5</string>
-    <string name="summary_support">Got any queries? We are happy to help!</string>
-    <string name="title_send_feedback">Send Feedback</string>
-    <string name="title_faq">FAQ</string>
-    <string name="summary_faq">View frequently asked questions</string>
-    <string name="url_faq">https://www.androidhive.info/privacy-policy/</string>
-    <string name="privacy_policy">Privacy Policy</string>
-    <string name="url_privacy">https://www.androidhive.info/privacy-policy/</string>
-    <string name="title_terms">Terms &amp; Conditions</string>
-    <string name="url_terms">https://www.androidhive.info/terms-of-service/</string>
-    <string name="title_version">Version</string>
-    <string name="choose_email_client">Choose email client</string>
-    <string name="title_gallery_storage">Default Storage</string>
+
     <string name="title_new_notification_sound">New message notification</string>
     <string name="title_vibrate">Vibrate</string>
     <string name="summary_vibrate">Vibrate on new notification</string>
@@ -97,12 +80,6 @@
     <string name="key_notifications_new_message_ringtone">key_notifications_new_message_ringtone</string>
     <string name="key_vibrate">key_vibrate</string>
     <string name="key_send_feedback">key_send_feedback</string>
-
-
-    <!-- FACEBOOK PURPOSE -->
-    <string name="facebook_application_id" translatable="false">816833522028448</string>
-    <string name="facebook_login_protocol_scheme" translatable="false" tools:ignore="UnusedResources">fb816833522028448</string>
-
 
     <!-- MENTOR_CHAT ACTIVITY -->
     <string name="toolbar_title_mentor_chat_activity">Chats de discussions</string>
@@ -124,20 +101,20 @@
     <string name="reply_title">Default reply action</string>
 
     <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
-    <string name="is_joining"> is joining!</string>
-    <string name="no_website_available">No website available</string>
-    <string name="phone_number_not_available">No phone number available</string>
-    <string name="sign_in">Signing in…</string>
-    <string name="sign_out">Signing out…</string>
-    <string name="available_workmates">Available workmates</string>
-    <string name="im_hungry">I\'m Hungry!</string>
-    <string name="settings_title">Settings</string>
-    <string name="there_is_an_error">There is an error</string>
+    <string name="sync_title">Synchroniser les emails périodiquement</string>
+    <string name="attachment_title">Télécharger les pièces jointes entrantes</string>
+    <string name="attachment_summary_on">Télécharger les pièces jointes entrantes</string>
+    <string name="attachment_summary_off">Télécharger uniquement les pièces jointes sur demande manuelle</string>
+    <string name="is_joining"> rejoint!</string>
+    <string name="no_website_available">Pas de site web disponible</string>
+    <string name="phone_number_not_available">Aucun numéro de téléphone disponible</string>
+    <string name="sign_in">Se connecte…</string>
+    <string name="sign_out">Se déconnecte…</string>
+    <string name="available_workmates">Collègues disponibles</string>
+    <string name="im_hungry">J\'ai faim!</string>
+    <string name="settings_title">Réglages</string>
+    <string name="there_is_an_error">Une erreur est survenue</string>
     <string name="on_complete_is_running">on complete is running</string>
-    <string name="current_location">Current Position</string>
-    <string name="no_restaurant_selected_yet">No restaurant selected yet</string>
+    <string name="current_location">Position actuelle</string>
+    <string name="no_restaurant_selected_yet">Aucun restaurant sélectionné pour l\'instant</string>
 </resources>

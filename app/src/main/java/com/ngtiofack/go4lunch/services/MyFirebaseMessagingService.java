@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.ngtiofack.go4lunch.utils.mainUtils.RESTAURANT_IS_NOTSELECTED;
+import static com.ngtiofack.go4lunch.utils.mainUtils.RESTAURANT_IS_NOT_SELECTED;
 import static com.ngtiofack.go4lunch.utils.mainUtils.getUserId;
 import static com.ngtiofack.go4lunch.utils.mainUtils.getYourLunch;
 
@@ -107,7 +107,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Iterable<DataSnapshot> keyALL = dataSnapshot.getChildren();
-                if (!mYourLunch.getName().equals(RESTAURANT_IS_NOTSELECTED)) {
+                if (!mYourLunch.getName().equals(RESTAURANT_IS_NOT_SELECTED)) {
                     for (DataSnapshot keyRestaurantName : keyALL) {
                         Iterable<DataSnapshot> keysFinal = keyRestaurantName.getChildren();
                         if (Objects.equals(keyRestaurantName.getKey(), mYourLunch.getName())) {
