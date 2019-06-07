@@ -82,6 +82,8 @@
     <string name="key_send_feedback">key_send_feedback</string>
 
 
+
+
     <!-- FACEBOOK PURPOSE -->
     <string name="facebook_application_id" translatable="false">816833522028448</string>
     <string name="facebook_login_protocol_scheme" translatable="false" tools:ignore="UnusedResources">fb816833522028448</string>
@@ -114,8 +116,9 @@
     <string name="is_joining"> is joining!</string>
     <string name="no_website_available">No website available</string>
     <string name="phone_number_not_available">No phone number available</string>
-    <string name="sign_in">Signing in…</string>
     <string name="sign_out">Signing out…</string>
+    <string name="sign_in">Signing in…</string>
+    <string name="title_version">Version</string>
     <string name="available_workmates">Available workmates</string>
     <string name="im_hungry">I\'m Hungry!</string>
     <string name="settings_title">Settings</string>
@@ -123,4 +126,10 @@
     <string name="on_complete_is_running">on complete is running</string>
     <string name="current_location">Current Position</string>
     <string name="no_restaurant_selected_yet">No restaurant selected yet</string>
+    <string name="openHoursRestaurant">is open</string>
+    <string name="isClosedOpenHours">is closed</string>
+    <string name="notAvailableOpenHours">Not available</string>
+    <string name="RestaurantIsChoosen">hasn\'t decided yet</string>
+    <string name="isEating">is eating</string>
+    <string name="noRestaurantSelected">No restaurant was selected</string>
 </resources>

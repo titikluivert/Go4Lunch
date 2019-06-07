@@ -34,6 +34,7 @@ public class WorkmatesViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.BtnChat)
     ImageButton chatButton;
 
+
     public WorkmatesViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
@@ -54,24 +55,24 @@ public class WorkmatesViewHolder extends RecyclerView.ViewHolder {
             v.getContext().startActivity(intent);
         });
 
-        String openHours = " hasn't decided yet";
-        ;
+        String decisionToLunch = this.imageView.getContext().getString(R.string.RestaurantIsChoosen);
+
 
         if (result.getYourLunch() != null) {
             if (result.getYourLunch().getName() != null) {
                 if (!result.getYourLunch().getName().isEmpty()) {
-                    openHours = " is eating";
+                    decisionToLunch = this.imageView.getContext().getString(R.string.isEating);
                     restaurantChoosed = true;
                 }
             }
         }
         if (!restaurantChoosed) {
-            this.user_and_menuRestaurant.setText(result.getUsername() + " " + openHours);
+            this.user_and_menuRestaurant.setText(result.getUsername() + " " + decisionToLunch);
             this.user_and_menuRestaurant.setTextColor(ContextCompat.getColor(this.imageView.getContext(), R.color.colorGrey));
             this.user_and_menuRestaurant.setTypeface(null, Typeface.ITALIC);
         } else {
 
-            this.user_and_menuRestaurant.setText(result.getUsername() + " " + openHours + " ( " + result.getYourLunch().getName() + " )");
+            this.user_and_menuRestaurant.setText(result.getUsername() + " " + decisionToLunch + " ( " + result.getYourLunch().getName() + " )");
         }
         glide.load(result.getUrlPicture()).apply(RequestOptions.circleCropTransform()).into(imageView);
 

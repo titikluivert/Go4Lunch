@@ -29,7 +29,7 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.ngtiofack.go4lunch.utils.mainUtils.getUserId;
+import static com.ngtiofack.go4lunch.utils.UserIDUtils.getUserId;
 
 public class WorkmatesFragment extends Fragment {
 

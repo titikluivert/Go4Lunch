@@ -49,7 +49,8 @@
 
         <Preference
             app:summary="@string/app_version"
-            app:title="@string/title_version" />
+            app:title="@string/title_version"
+            />
     </PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

@@ -2,22 +2,22 @@ package com.ngtiofack.go4lunch.controler.activities;
 
 import android.content.Context;
 import android.os.Bundle;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
@@ -29,19 +29,28 @@ import com.ngtiofack.go4lunch.api.RestaurantHelper;
 import com.ngtiofack.go4lunch.model.Go4LunchUsers;
 import com.ngtiofack.go4lunch.model.RestaurantSelected;
 import com.ngtiofack.go4lunch.model.YourLunch;
-import com.ngtiofack.go4lunch.utils.mainUtils;
+import com.ngtiofack.go4lunch.utils.RestaurantsUtils;
 
 import java.util.Objects;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 import static com.ngtiofack.go4lunch.api.Go4LunchUserHelper.getUser;
+import static com.ngtiofack.go4lunch.utils.RestaurantsUtils.saveYourLunch;
 import static com.ngtiofack.go4lunch.utils.mainUtils.LIKE;
 import static com.ngtiofack.go4lunch.utils.mainUtils.RESTAURANT_IS_NOT_SELECTED;
 import static com.ngtiofack.go4lunch.utils.mainUtils.RESTAURANT_LIKE;
-import static com.ngtiofack.go4lunch.utils.mainUtils.saveYourLunch;
 
 public class DetailedRestaurantActivity extends BaseActivity {
 
-    Button website, phoneNum, likeRestaurant;
+    @BindView(R.id.websiteOfTheRestaurant)
+    Button website;
+    @BindView(R.id.phoneNumberRestaurant)
+    Button phoneNum;
+    @BindView(R.id.likeButtonRestaurant)
+    Button likeRestaurant;
+
     RequestManager glide;
 
     int numOfStars;
@@ -50,39 +59,49 @@ public class DetailedRestaurantActivity extends BaseActivity {
     static boolean dataChanged = true;
     static String uid;
     String nameRestaurant;
-    String restaurantSelectedStoreOnFirebase;
+    String restaurantSelectedStoreOnFirebase = " ";
     String vicinity;
     String photoReferenceUrl;
     int photoHeight;
     int photoWidth;
-    private RecyclerView mResultList;
+
+    @BindView(R.id.list_workmates_recycler_view)
+    RecyclerView mResultList;
+
+    @BindView(R.id.fabDetailRestaurant)
+    FloatingActionButton fab;
+
+    @BindView(R.id.nameOfRestaurantDetail)
+    TextView nameOfRestaurant;
+
+    @BindView(R.id.addressOfRestaurantDetail)
+    TextView addressOfRestaurant;
+
+    @BindView(R.id.ImgRestaurantDetails)
+    ImageView imgRestaurantDetails;
+
+    @BindView(R.id.numOfStarsDetails_0)
+    ImageView stars0;
+
+    @BindView(R.id.numOfStarsDetails_1)
+    ImageView stars1;
+
+    @BindView(R.id.numOfStarsDetails_2)
+    ImageView stars2;
+
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detailed_restaurant);
+        ButterKnife.bind(this);
+
         glide = Glide.with(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
-        mResultList = findViewById(R.id.list_workmates_recycler_view);
         mResultList.setHasFixedSize(true);
         mResultList.setLayoutManager(new LinearLayoutManager(this));
-
-        final FloatingActionButton fab = findViewById(R.id.fabDetailRestaurant);
-        TextView nameOfRestaurant = findViewById(R.id.nameOfRestaurantDetail);
-        TextView addressOfRestaurant = findViewById(R.id.addressOfRestaurantDetail);
-        ImageView imgRestaurantDetails = findViewById(R.id.ImgRestaurantDetails);
-
-        website = findViewById(R.id.websiteOfTheRestaurant);
-        phoneNum = findViewById(R.id.phoneNumberRestaurant);
-        likeRestaurant = findViewById(R.id.likeButtonRestaurant);
-
-
-        ImageView stars0 = findViewById(R.id.numOfStarsDetails_0);
-        ImageView stars1 = findViewById(R.id.numOfStarsDetails_1);
-        ImageView stars2 = findViewById(R.id.numOfStarsDetails_2);
-
 
         vicinity = getIntent().getStringExtra(getString(R.string.vicinity));
         nameRestaurant = getIntent().getStringExtra(getString(R.string.name_restaurant));
@@ -120,27 +139,28 @@ public class DetailedRestaurantActivity extends BaseActivity {
             photoHeight = getIntent().getIntExtra(getString(R.string.photoHeight), 1000);
             photoWidth = getIntent().getIntExtra(getString(R.string.photoWidth), 1000);
 
-            glide.load(mainUtils.getPhotoUrl(this, photoReferenceUrl, photoHeight, photoWidth)).apply(RequestOptions.centerInsideTransform()).into(imgRestaurantDetails);
+            glide.load(RestaurantsUtils.getPhotoUrl( photoReferenceUrl, photoHeight, photoWidth)).apply(RequestOptions.centerInsideTransform()).into(imgRestaurantDetails);
         } else {
 
             glide.load(R.drawable.restaurant_default_img).apply(RequestOptions.centerInsideTransform()).into(imgRestaurantDetails);
         }
 
-        //YourLunch mYourLunch = new YourLunch(nameRestaurant,vicinity,photoHeight,photoWidth,photoReferenceUrl,numOfStars);
         uid = this.getCurrentUser().getUid();
 
         getUser(uid)
                 .addOnSuccessListener(documentSnapshot -> {
-                    restaurantSelectedStoreOnFirebase = "";
-                     if(documentSnapshot !=null) {
+
+                    if (documentSnapshot != null) {
                         Go4LunchUsers go4LunchUsers = documentSnapshot.toObject(Go4LunchUsers.class);
                         restaurantSelectedStoreOnFirebase = Objects.requireNonNull(go4LunchUsers).getYourLunch().getName();
+
+                        if (restaurantSelectedStoreOnFirebase.equals(nameRestaurant)) {
+                            fab.setImageResource(R.drawable.check_restaurant);
+                            writeNewUser(getCurrentUser().getDisplayName(), nameRestaurant, Objects.requireNonNull(getCurrentUser().getPhotoUrl()).toString());
+                            fabIsClicked = false;
+                        }
                     }
-                    if (restaurantSelectedStoreOnFirebase.equals(nameRestaurant)) {
-                        fab.setImageResource(R.drawable.check_restaurant);
-                        writeNewUser(getCurrentUser().getDisplayName(), nameRestaurant, Objects.requireNonNull(getCurrentUser().getPhotoUrl()).toString());
-                        fabIsClicked = false;
-                    }
+
                 });
 
         fab.setOnClickListener(view -> {
@@ -148,7 +168,7 @@ public class DetailedRestaurantActivity extends BaseActivity {
             if (fabIsClicked) {
                 fab.setImageResource(R.drawable.check_restaurant);
                 // createUser()
-                updateRestaurantSelectedParams(new YourLunch(nameRestaurant,vicinity,photoHeight,photoWidth,photoReferenceUrl,numOfStars));
+                updateRestaurantSelectedParams(new YourLunch(nameRestaurant, vicinity, photoHeight, photoWidth, photoReferenceUrl, numOfStars));
                 dataChanged = false;
                 deleteNewUser();
                 writeNewUser(getCurrentUser().getDisplayName(), nameRestaurant, Objects.requireNonNull(getCurrentUser().getPhotoUrl()).toString());
@@ -250,14 +270,14 @@ public class DetailedRestaurantActivity extends BaseActivity {
 
     }
 
-    private void updateRestaurantSelectedParams (YourLunch mYourLunch){
+    private void updateRestaurantSelectedParams(YourLunch mYourLunch) {
 
         String urlPicture = (this.getCurrentUser().getPhotoUrl() != null) ? this.getCurrentUser().getPhotoUrl().toString() : null;
         String username = this.getCurrentUser().getDisplayName();
         String uid = this.getCurrentUser().getUid();
         boolean isConnected = this.isCurrentUserLogged();
 
-        Go4LunchUserHelper.createUser(uid, username, urlPicture, isConnected,mYourLunch).addOnFailureListener(this.onFailureListener());
+        Go4LunchUserHelper.createUser(uid, username, urlPicture, isConnected, mYourLunch).addOnFailureListener(this.onFailureListener());
     }
 
 }

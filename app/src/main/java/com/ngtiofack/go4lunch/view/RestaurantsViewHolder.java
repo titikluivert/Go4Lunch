@@ -1,6 +1,8 @@
 package com.ngtiofack.go4lunch.view;
 
 import android.annotation.SuppressLint;
+
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -17,12 +19,11 @@ import com.ngtiofack.go4lunch.R;
 import com.ngtiofack.go4lunch.model.RestaurantsModel;
 import com.ngtiofack.go4lunch.utils.CurrentLocation;
 import com.ngtiofack.go4lunch.model.SaveCurrentLocation;
-import com.ngtiofack.go4lunch.utils.mainUtils;
-
+import com.ngtiofack.go4lunch.utils.RestaurantsUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.ngtiofack.go4lunch.utils.mainUtils.getNumOfStars;
+import static com.ngtiofack.go4lunch.utils.RestaurantsUtils.getNumOfStars;
 
 /**
  * Created by NG-TIOFACK on 12/19/2018.
@@ -103,7 +104,7 @@ public class RestaurantsViewHolder extends RecyclerView.ViewHolder {
         }
 
         this.Title.setText(result.getName());
-        this.distanceOfRestaurant.setText(mainUtils.getDistanceToRestaurants(
+        this.distanceOfRestaurant.setText(RestaurantsUtils.getDistanceToRestaurants(
                 Double.parseDouble(result.getGeometry().getLocation().getLat().toString().replaceAll(" ", ".")),
                 Double.parseDouble(result.getGeometry().getLocation().getLng().toString().replaceAll(" ", ".")),
                 (double) LatLng.getLatitude(),
@@ -111,18 +112,18 @@ public class RestaurantsViewHolder extends RecyclerView.ViewHolder {
         ) + "m");
 
         this.addressRestaurant.setText(result.getVicinity());
-        String openHours = "Not available";
+        String openHours = this.distanceOfRestaurant.getContext().getString(R.string.notAvailableOpenHours);
         if (result.getOpeningHours() != null) {
             if (result.getOpeningHours().getOpenNow()) {
-                openHours = "is Open";
+                openHours =this.distanceOfRestaurant.getContext().getString(R.string.openHoursRestaurant);
             } else {
-                openHours = "is closed";
+                openHours =this.distanceOfRestaurant.getContext().getString(R.string.isClosedOpenHours);
             }
         }
         this.closeTime.setText(openHours);
 
         if (result.getPhotos() != null) {
-            String photoUrl = mainUtils.getPhotoUrl(this.closeTime.getContext(), result.getPhotos().get(0).getPhotoReference(), result.getPhotos().get(0).getHeight(), result.getPhotos().get(0).getWidth());
+            String photoUrl = RestaurantsUtils.getPhotoUrl(result.getPhotos().get(0).getPhotoReference(), result.getPhotos().get(0).getHeight(), result.getPhotos().get(0).getWidth());
             glide.load(photoUrl).apply(RequestOptions.circleCropTransform()).into(imageView);
 
         } else {

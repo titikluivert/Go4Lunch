@@ -11,14 +11,12 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
@@ -36,6 +34,7 @@ import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.jgabrielfreitas.core.BlurImageView;
+import com.ngtiofack.go4lunch.BuildConfig;
 import com.ngtiofack.go4lunch.R;
 import com.ngtiofack.go4lunch.api.Go4LunchUserHelper;
 import com.ngtiofack.go4lunch.controler.fragments.ListViewFragment;
@@ -44,15 +43,15 @@ import com.ngtiofack.go4lunch.controler.fragments.WorkmatesFragment;
 import com.ngtiofack.go4lunch.model.SaveCurrentLocation;
 import com.ngtiofack.go4lunch.model.YourLunch;
 import com.ngtiofack.go4lunch.utils.CurrentLocation;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
+import static com.ngtiofack.go4lunch.utils.RestaurantsUtils.getYourLunch;
+import static com.ngtiofack.go4lunch.utils.UserIDUtils.saveUserId;
 import static com.ngtiofack.go4lunch.utils.mainUtils.RESTAURANT_IS_NOT_SELECTED;
-import static com.ngtiofack.go4lunch.utils.mainUtils.getYourLunch;
-import static com.ngtiofack.go4lunch.utils.mainUtils.saveUserId;
-
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, MapsViewFragment.OnDataPass {
 
@@ -60,17 +59,30 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private SaveCurrentLocation currentLatLng;
     private int AUTOCOMPLETE_REQUEST_CODE = 1;
 
+    @BindView(R.id.navigation)
+    BottomNavigationView navigation;
+
+    @BindView(R.id.nav_view)
+    NavigationView navigationView ;
+
     ImageView imageViewProfile;
     TextView textInputEditTextUsername;
     TextView textViewEmail;
     View headView;
+
+    @BindView(R.id.relativProgressBar)
     RelativeLayout relProgress;
+
+    //Drawer Layout
+    @BindView(R.id.drawer_main_id)
+    DrawerLayout drawerLayout;
+
     YourLunch mYourLunch;
+    boolean bSingOut = false;
     // 2 - Identify each Http Request
     private static final int SIGN_OUT_TASK = 10;
     PlacesClient placesClient;
-    //Drawer Layout
-    private DrawerLayout drawerLayout;
+
     // define an ActionBarDrawerToggle
     private ActionBarDrawerToggle mToggle;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -101,24 +113,21 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         this.configureToolbar();
         currentLatLng = currentLocation.getSaveLatLng(this);
 
         // Initialize Places.
-        Places.initialize(getApplicationContext(), getString(R.string.google_maps_key));
+        Places.initialize(getApplicationContext(), BuildConfig.ApiKeyGoogleID);
         //Create a new Places client instance.
         placesClient = Places.createClient(this);
 
-
-        BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                 new MapsViewFragment()).commit();
 
-        relProgress = findViewById(R.id.relativProgressBar);
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         headView = navigationView.getHeaderView(0);
@@ -129,7 +138,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         BlurImageView blurImageView = headView.findViewById(R.id.BlurImageViewHeaderDrawer);
         blurImageView.setBlur(10);
 
-        drawerLayout = findViewById(R.id.drawer_main_id);
         mToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
@@ -182,7 +190,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
                 if (mYourLunch.getName().equals(RESTAURANT_IS_NOT_SELECTED)) {
 
-                    Toast.makeText(this, "No restaurant was selected", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, this.getString(R.string.noRestaurantSelected), Toast.LENGTH_SHORT).show();
                 } else {
                     Intent myIntent = new Intent(this, DetailedRestaurantActivity.class);
                     myIntent.putExtra(getString(R.string.name_restaurant), mYourLunch.getName());
@@ -232,12 +240,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void signOutUserFromGo4Lunch() {
+        bSingOut = true;
         showProgress(this.getString(R.string.sign_out));
         updateConnected(false);
         AuthUI.getInstance()
                 .signOut(this)
                 .addOnSuccessListener(this, this.updateUIAfterRESTRequestsCompleted(SIGN_OUT_TASK));
-
     }
 
     private void configureToolbar() {
@@ -308,7 +316,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }
     }
 
-
     @Override
     public void onDataPass(boolean data) {
         if (data) {
@@ -319,7 +326,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onPause() {
         super.onPause();
-        saveUserId(this, this.getCurrentUser().getUid());
+        if (!bSingOut) {
+            saveUserId(this, this.getCurrentUser().getUid());
+        }
     }
 
 }

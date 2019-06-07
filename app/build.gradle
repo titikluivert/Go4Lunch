@@ -1,5 +1,13 @@
 apply plugin: 'com.android.application'
 
+
+def FACEBOOK_APP_ID    = '"' + FaceBookAppId + '"' ?: '"Define a facebook App Id"'
+def FACEBOOK_APP_ID_FB = '"' + FaceBookAppID_fb + '"' ?: '"Define a facebook App fb Id"'
+def GOOGLE_MAP_ID      = '"' + GoogleMapApiKey + '"' ?: '"Define a google map Id"'
+
+
+def STRING = 'String'
+
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -15,11 +23,38 @@ android {
         renderscriptSupportModeEnabled true
         multiDexEnabled true
         resConfigs "en", "fr"
+
+        each { type ->
+
+            type.buildConfigField STRING, "ApiKeyGoogleID", GOOGLE_MAP_ID
+            type.buildConfigField STRING, "ApiKeyFacebookID", FACEBOOK_APP_ID
+            type.buildConfigField STRING, "ApiKeyFacebookFBID", FACEBOOK_APP_ID_FB
+
+            type.resValue 'string', "api_key_google_id", GOOGLE_MAP_ID
+            type.resValue 'string', "api_key_Facebook_id", FACEBOOK_APP_ID
+            type.resValue 'string', "api_key_FacebookFB_id", FACEBOOK_APP_ID_FB
+
+        }
+
+        manifestPlaceholders = [
+                GOOGLE_MAP_ID_KEY      : GOOGLE_MAP_ID,
+                FACEBOOK_APP_ID_KEY    : FACEBOOK_APP_ID,
+                FACEBOOK_APP_ID_FB_KEY : FACEBOOK_APP_ID_FB
+        ]
+
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            buildConfigField STRING, "ApiKeyGoogleID", GOOGLE_MAP_ID
+            buildConfigField STRING, "ApiKeyFacebookID", FACEBOOK_APP_ID
+            buildConfigField STRING, "ApiKeyFacebookFBID", FACEBOOK_APP_ID_FB
+
+            resValue 'string', "api_key_google_id", GOOGLE_MAP_ID
+            resValue 'string', "api_key_Facebook_id", FACEBOOK_APP_ID
+            resValue 'string', "api_key_FacebookFB_id", FACEBOOK_APP_ID_FB
         }
     }
     compileOptions {

@@ -24,9 +24,6 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsViewHold
     // 1 - Declaring a Glide object
     private RequestManager glide;
 
-    public RestaurantsAdapter() {
-    }
-
     // 2 - Updating our constructor adding a Glide Object
     public RestaurantsAdapter(List<RestaurantsModel.Result> mostBusinessDocsList, RequestManager glide) {
         this.myRestaurantsList = mostBusinessDocsList;

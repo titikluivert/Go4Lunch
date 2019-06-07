@@ -30,8 +30,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.ngtiofack.go4lunch.utils.mainUtils.RESTAURANT_IS_NOT_SELECTED;
-import static com.ngtiofack.go4lunch.utils.mainUtils.getUserId;
-import static com.ngtiofack.go4lunch.utils.mainUtils.getYourLunch;
+import static com.ngtiofack.go4lunch.utils.UserIDUtils.getUserId;
+import static com.ngtiofack.go4lunch.utils.RestaurantsUtils.getYourLunch;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public static String TAG = "FirebaseMessagingService";

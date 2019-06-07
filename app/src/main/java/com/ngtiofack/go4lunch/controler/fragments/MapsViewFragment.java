@@ -12,11 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -40,11 +42,15 @@ import com.ngtiofack.go4lunch.controler.activities.DetailedRestaurantActivity;
 import com.ngtiofack.go4lunch.model.RestaurantsModel;
 import com.ngtiofack.go4lunch.utils.CurrentLocation;
 import com.ngtiofack.go4lunch.utils.RestaurantsServiceStreams;
+import com.ngtiofack.go4lunch.utils.RestaurantsUtils;
 import com.ngtiofack.go4lunch.utils.mainUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
 import io.reactivex.observers.DisposableObserver;
+
 import static com.ngtiofack.go4lunch.utils.mainUtils.PROXIMITY_RADIUS;
 import static com.ngtiofack.go4lunch.utils.mainUtils.TYPE;
 import static com.ngtiofack.go4lunch.utils.mainUtils.bitmapDescriptorFromVector;
@@ -60,6 +66,7 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
     private View mView;
     private Marker m;
     private OnDataPass dataPasser;
+    private MarkerOptions markerOptions = new MarkerOptions();
     private List<String> reselected = new ArrayList<>();
     private LocationCallback mLocationCallback = new LocationCallback() {
 
@@ -91,6 +98,7 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
         mView = inflater.inflate(R.layout.fragment_maps, container, false);
         return mView;
     }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -156,55 +164,7 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
                     // This loop will go through all the results and add marker on each location.
                     for (int i = 0; i < results.getResults().size(); i++) {
 
-                        double lat = results.getResults().get(i).getGeometry().getLocation().getLat();
-                        double lng = results.getResults().get(i).getGeometry().getLocation().getLng();
-
-                        String placeName = results.getResults().get(i).getName();
-                        String vicinity = results.getResults().get(i).getVicinity();
-                        double rating = results.getResults().get(i).getRating() == null ? 0 : results.getResults().get(i).getRating();
-
-                        String photoRef;
-                        int photoHeight, photoWidth;
-                        if (results.getResults().get(i).getPhotos() != null) {
-                            photoRef = results.getResults().get(i).getPhotos().get(0).getPhotoReference();
-                            photoHeight = results.getResults().get(i).getPhotos().get(0).getHeight();
-                            photoWidth = results.getResults().get(i).getPhotos().get(0).getWidth();
-
-                        } else {
-                            photoRef = "";
-                            photoHeight = 0;
-                            photoWidth = 0;
-                        }
-
-                        MarkerOptions markerOptions = new MarkerOptions();
-                        LatLng latLng = new LatLng(lat, lng);
-                        // Position of Marker on Map
-                        markerOptions.position(latLng);
-                        // Adding Title to the Marker
-                        markerOptions.title(placeName + " : " + vicinity);
-                        markerOptions.snippet(photoRef + ":" + photoHeight + ":" + photoWidth + ":" + rating);
-
-                        if (reselected.contains(placeName)) {
-                            markerOptions.icon(bitmapDescriptorFromVector(getContext(), R.drawable.ic_restaurant_map_marker_sel_));
-                        } else {
-                            markerOptions.icon(bitmapDescriptorFromVector(getContext(), R.drawable.ic_restaurant_map_marker_));
-                        }
-                        // stop progressBar
-                        passData(true);
-
-                        if (i == results.getResults().size() - 1) {
-                            //Place current location marker
-                            latLng = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
-                            //MarkerOptions markerOptions = new MarkerOptions();
-                            markerOptions.position(latLng);
-                            markerOptions.title(Objects.requireNonNull(getContext()).getString(R.string.current_location));
-                            // markerOptions.snippet()
-                            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-                        }
-                        //move map camera
-
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, mainUtils.zoomLevel));
-
+                        preparePlaceAndMarker(results,mLocation,i);
                         m = mMap.addMarker(markerOptions);
                         m.setTag(i);
 
@@ -212,46 +172,21 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
                          Return true if the click event is consumed (and therefore no
                          info window is displayed) or false to produce default behavior.*/
 
-                        mMap.setOnMarkerClickListener(marker -> {
-                            String[] name_and_address, refPhotoHeightWidth;
-                            Integer clickCount = (Integer) marker.getTag();
-                            String photoUrl;
-                            // Check if a click count was set, then display the click count.
-                            if (clickCount != null) {
-                                clickCount = clickCount + 1;
-                                marker.setTag(clickCount);
-                                name_and_address = marker.getTitle().split(":");
-                                refPhotoHeightWidth = marker.getSnippet().split(":");
-                                Intent myIntent = new Intent(getActivity(), DetailedRestaurantActivity.class);
-                                myIntent.putExtra(getString(R.string.vicinity), name_and_address[1].trim());
-                                myIntent.putExtra(getString(R.string.name_restaurant), name_and_address[0].trim());
-
-                                if (refPhotoHeightWidth[0].isEmpty()) {
-                                    photoUrl = "";
-                                } else {
-                                    photoUrl = refPhotoHeightWidth[0];
-                                    myIntent.putExtra(getString(R.string.photoHeight), refPhotoHeightWidth[1]);
-                                    myIntent.putExtra(getString(R.string.photoWidth), refPhotoHeightWidth[2]);
-                                }
-                                myIntent.putExtra(getString(R.string.photosReference), photoUrl);
-                                myIntent.putExtra(getString(R.string.number_of_stars), mainUtils.getNumOfStars(Double.parseDouble(refPhotoHeightWidth[3])));
-
-                                startActivity(myIntent);
-                            }
-                            return true;
-                        });
+                        placeRestaurantToMap(results);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
+
             @Override
             public void onError(Throwable e) {
-              //  Log.e("", Objects.requireNonNull(getContext()).getString(R.string.there_is_an_error)+ e);
+                //  Log.e("", Objects.requireNonNull(getContext()).getString(R.string.there_is_an_error)+ e);
             }
+
             @Override
             public void onComplete() {
-              //  Log.e("", Objects.requireNonNull(getContext()).getString(R.string.on_complete_is_running));
+                //  Log.e("", Objects.requireNonNull(getContext()).getString(R.string.on_complete_is_running));
             }
         });
     }
@@ -261,6 +196,96 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
         super.onPause();
         currentLocation.saveLatLng(mView.getContext(), (float) latitude, (float) longitude);
 
+    }
+
+    private void placeRestaurantToMap(RestaurantsModel results){
+        mMap.setOnMarkerClickListener(marker -> {
+            String[] name_and_address, refPhotoHeightWidth;
+            Integer clickCount = (Integer) marker.getTag();
+            String photoUrl;
+            boolean retValue = true;
+            // Check if a click count was set, then display the click count.
+            if (clickCount != null) {
+                clickCount = clickCount + 1;
+                marker.setTag(clickCount);
+                name_and_address = marker.getTitle().split(":");
+                refPhotoHeightWidth = marker.getSnippet().split(":");
+
+                if (clickCount < results.getResults().size()) {
+                    Intent myIntent = new Intent(getActivity(), DetailedRestaurantActivity.class);
+                    myIntent.putExtra(getString(R.string.vicinity), name_and_address[1].trim());
+                    myIntent.putExtra(getString(R.string.name_restaurant), name_and_address[0].trim());
+
+                    if (refPhotoHeightWidth[0].isEmpty()) {
+                        photoUrl = "";
+                    } else {
+                        photoUrl = refPhotoHeightWidth[0];
+                        myIntent.putExtra(getString(R.string.photoHeight), refPhotoHeightWidth[1]);
+                        myIntent.putExtra(getString(R.string.photoWidth), refPhotoHeightWidth[2]);
+                    }
+                    myIntent.putExtra(getString(R.string.photosReference), photoUrl);
+                    myIntent.putExtra(getString(R.string.number_of_stars), RestaurantsUtils.getNumOfStars(Double.parseDouble(refPhotoHeightWidth[3])));
+
+                    startActivity(myIntent);
+
+                } else {
+                    retValue =  false;
+
+                }
+            }
+            return retValue;
+        });
+    }
+
+    private void preparePlaceAndMarker (RestaurantsModel results, Location mLocation, int i){
+
+        double lat = results.getResults().get(i).getGeometry().getLocation().getLat();
+        double lng = results.getResults().get(i).getGeometry().getLocation().getLng();
+
+        String placeName = results.getResults().get(i).getName();
+        String vicinity = results.getResults().get(i).getVicinity();
+        double rating = results.getResults().get(i).getRating() == null ? 0 : results.getResults().get(i).getRating();
+
+        String photoRef;
+        int photoHeight, photoWidth;
+        if (results.getResults().get(i).getPhotos() != null) {
+            photoRef = results.getResults().get(i).getPhotos().get(0).getPhotoReference();
+            photoHeight = results.getResults().get(i).getPhotos().get(0).getHeight();
+            photoWidth = results.getResults().get(i).getPhotos().get(0).getWidth();
+
+        } else {
+            photoRef = "";
+            photoHeight = 0;
+            photoWidth = 0;
+        }
+
+        LatLng latLng = new LatLng(lat, lng);
+        // Position of Marker on Map
+        markerOptions.position(latLng);
+        // Adding Title to the Marker
+        markerOptions.title(placeName + " : " + vicinity);
+        markerOptions.snippet(photoRef + ":" + photoHeight + ":" + photoWidth + ":" + rating);
+
+        if (reselected.contains(placeName)) {
+            markerOptions.icon(bitmapDescriptorFromVector(getContext(), R.drawable.ic_restaurant_map_marker_sel_));
+        } else {
+            markerOptions.icon(bitmapDescriptorFromVector(getContext(), R.drawable.ic_restaurant_map_marker_));
+        }
+        // stop progressBar
+        passData(true);
+
+        if (i == results.getResults().size() - 1) {
+            //Place current location marker
+            latLng = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
+            //MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(latLng);
+            markerOptions.title(Objects.requireNonNull(getContext()).getString(R.string.current_location));
+            // markerOptions.snippet()
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+        }
+        //move map camera
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, mainUtils.zoomLevel));
     }
 
     public interface OnDataPass {

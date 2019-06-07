@@ -99,6 +99,7 @@
     <!-- Messages Preferences -->
     <string name="signature_title">Your signature</string>
     <string name="reply_title">Default reply action</string>
+    <string name="title_version">Version</string>
 
     <!-- Sync Preferences -->
     <string name="sync_title">Synchroniser les emails périodiquement</string>
@@ -117,4 +118,11 @@
     <string name="on_complete_is_running">on complete is running</string>
     <string name="current_location">Position actuelle</string>
     <string name="no_restaurant_selected_yet">Aucun restaurant sélectionné pour l\'instant</string>
+
+    <string name="openHoursRestaurant">Ouvert</string>
+    <string name="isClosedOpenHours">Fermé</string>
+    <string name="notAvailableOpenHours">Pas disponible</string>
+    <string name="RestaurantIsChoosen"> ne s\'est pas encore decidé</string>
+    <string name="isEating">mange actuellement</string>
+    <string name="noRestaurantSelected">Acusun restaurant n\'a encore été choisi</string>
 </resources>

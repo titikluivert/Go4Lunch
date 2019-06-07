@@ -3,46 +3,55 @@ package com.ngtiofack.go4lunch.controler.activities;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import com.google.android.material.snackbar.Snackbar;
+import android.view.View;
 import android.widget.RelativeLayout;
+
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.material.snackbar.Snackbar;
 import com.jgabrielfreitas.core.BlurImageView;
 import com.ngtiofack.go4lunch.R;
+
 import java.util.Collections;
 import java.util.Objects;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class LoginActivity extends BaseActivity {
 
     // 1 - Identifier for Sign-In Activity
     private static final int RC_SIGN_IN = 123;
 
+    @BindView(R.id.BlurImageView)
+    BlurImageView blurImageView;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-
-        RelativeLayout mButton_login = findViewById(R.id.relative_google);
-        mButton_login.setOnClickListener(v -> {
-            // 3 - Launch Sign-In Activity when user clicked on Login Button
-            startSignInActivity(new AuthUI.IdpConfig.GoogleBuilder().build());
-        });
-
-        RelativeLayout mButton_login_fcb = findViewById(R.id.relative_fcb);
-        mButton_login_fcb.setOnClickListener(v -> {
-            // 3 - Launch Sign-In Activity when user clicked on Login Button
-            startSignInActivity(new AuthUI.IdpConfig.FacebookBuilder().build());
-        });
-        BlurImageView blurImageView = findViewById(R.id.BlurImageView);
+        ButterKnife.bind(this);
         blurImageView.setBlur(5);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDarkDyn));
         }
 
+    }
+
+    @OnClick(R.id.relative_google)
+    public void googleConnection() {
+        startSignInActivity(new AuthUI.IdpConfig.GoogleBuilder().build());
+    }
+
+    @OnClick(R.id.relative_fcb)
+    public void facebookConnection() {
+        startSignInActivity(new AuthUI.IdpConfig.FacebookBuilder().build());
     }
 
     private void startSignInActivity(AuthUI.IdpConfig providers) {
@@ -62,6 +71,7 @@ public class LoginActivity extends BaseActivity {
         // 4 - Handle SignIn Activity response on activity result
         this.handleResponseAfterSignIn(requestCode, resultCode, data);
     }
+
     // 3 - Method that handles response after SignIn Activity close
     private void handleResponseAfterSignIn(int requestCode, int resultCode, Intent data) {
 

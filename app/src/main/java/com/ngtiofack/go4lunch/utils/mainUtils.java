@@ -1,18 +1,14 @@
 package com.ngtiofack.go4lunch.utils;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.preference.PreferenceManager;
-
 import androidx.core.content.ContextCompat;
-
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.ngtiofack.go4lunch.R;
-import com.ngtiofack.go4lunch.model.YourLunch;
+
+import java.util.Objects;
 
 /**
  * Created by NG-TIOFACK on 2/13/2019.
@@ -26,82 +22,12 @@ public class mainUtils {
     public static final String TYPE = "restaurant";
     public static  final String RESTAURANT_LIKE = "Restaurants";
     public static  final String LIKE = "like";
+    public static final String API_GOOGLE_PATH = "api/place/nearbysearch/json?sensor=true&key=";
 
     public static final String RESTAURANT_IS_NOT_SELECTED = "No restaurant is selected";
     public static final String COLLECTION_NAME = "messages";
     public static final String RESTAURANT_SELECTED = "restaurantSelected";
 
-
-    public static int getDistanceToRestaurants(double latA, double longA, double latB, double longB) {
-        final double a = 111.16;
-        double temp = (Math.abs(Math.sqrt((longA - longB) * (longA - longB) + (latA - latB) * (latA - latB)) * a)) * 1000;
-        return (int) temp;
-    }
-
-    public static String getPhotoUrl(Context ctx, String photoReferenceUrl, int photoHeight, int photoWidth) {
-
-        return "https://maps.googleapis.com/maps/api/place/photo?photoreference="
-                + photoReferenceUrl
-                + "&sensor=false&maxheight="
-                + photoHeight + "&maxwidth="
-                + photoWidth + "&key="
-                + ctx.getString(R.string.google_maps_key);
-    }
-
-    public static int getNumOfStars(Double rating) {
-        int retValue;
-        if (rating <= 4) {
-            retValue = 0;
-        } else {
-            if (rating < 4.4) {
-                retValue = 1;
-            } else {
-                if (rating < 4.8) {
-                    retValue = 2;
-                } else {
-                    retValue = 3;
-                }
-            }
-        }
-        return retValue;
-    }
-
-    public static void saveYourLunch(Context ctx, String name, String vicinity, int photoHeight, int photoWidth, String photoRef, int rating) {
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(ctx.getString(R.string.save_restaurantName_key), name);
-        editor.putString(ctx.getString(R.string.save_vicinity_key), vicinity);
-        editor.putInt(ctx.getString(R.string.save_photoHeight_key), photoHeight);
-        editor.putInt(ctx.getString(R.string.save_photoWidth_key), photoWidth);
-        editor.putString(ctx.getString(R.string.save_photoRef_key), photoRef);
-        editor.putInt(ctx.getString(R.string.save_number_of_stars_key), rating);
-        editor.apply();
-    }
-
-    public static YourLunch getYourLunch(Context ctx) {
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
-
-        return new YourLunch(sharedPreferences.getString(ctx.getString(R.string.save_restaurantName_key), RESTAURANT_IS_NOT_SELECTED),
-                sharedPreferences.getString(ctx.getString(R.string.save_vicinity_key), ""),
-                sharedPreferences.getInt(ctx.getString(R.string.save_photoHeight_key), 0),
-                sharedPreferences.getInt(ctx.getString(R.string.save_photoWidth_key), 0),
-                sharedPreferences.getString(ctx.getString(R.string.save_photoRef_key), ""),
-                sharedPreferences.getInt(ctx.getString(R.string.save_number_of_stars_key), 0));
-    }
-
-    public static  void saveUserId (Context context, String uid) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(context.getString(R.string.save_uid_key), uid);
-        editor.apply();
-    }
-
-    public static String getUserId(Context ctx) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return sharedPreferences.getString(ctx.getString(R.string.save_uid_key), "");
-    }
 
     public static long convertHexToDecimal(String hexReceiverId, String hexSenderId){
 
@@ -148,7 +74,7 @@ public class mainUtils {
 
     public static BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
         Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
-        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+        vectorDrawable.setBounds(0, 0, Objects.requireNonNull(vectorDrawable).getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
         Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         vectorDrawable.draw(canvas);

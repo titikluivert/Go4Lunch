@@ -3,17 +3,11 @@ package com.ngtiofack.go4lunch.controler.activities;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import com.google.android.material.textfield.TextInputEditText;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -28,32 +22,23 @@ import com.ngtiofack.go4lunch.view.ChatAdapter;
 
 import java.util.Objects;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 public class ChatsActivity extends BaseActivity implements ChatAdapter.Listener {
 
     // FOR DESIGN
     // 1 - Getting all views needed
+    @BindView(R.id.activity_chat_recycler_view)
     RecyclerView recyclerView;
+
+    @BindView(R.id.activity_mentor_chat_text_view_recycler_view_empty)
     TextView textViewRecyclerViewEmpty;
+
+
+    @BindView(R.id.activity_mentor_chat_message_edit_text)
     TextInputEditText editTextMessage;
-    ImageView imageViewPreview;
-    ImageButton addFileButton;
-    Button chatSendButton;
-    //ROOT VIEW
-    RelativeLayout rootView;
-    //PROFILE CONTAINER
-    LinearLayout profileContainer;
-    ImageView imageViewProfile;
-    ImageView imageViewIsMentor;
-    //MESSAGE CONTAINER
-    RelativeLayout messageContainer;
-    //IMAGE SENDED CONTAINER
-    CardView cardViewImageSent;
-    ImageView imageViewSent;
-    //TEXT MESSAGE CONTAINER
-    LinearLayout textMessageContainer;
-    TextView textViewMessage;
-    //DATE TEXT
-    TextView textViewDate;
 
     // FOR DATA
     // 2 - Declaring Adapter and data
@@ -66,35 +51,10 @@ public class ChatsActivity extends BaseActivity implements ChatAdapter.Listener 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chats);
-
-        textViewRecyclerViewEmpty = findViewById(R.id.activity_mentor_chat_text_view_recycler_view_empty);
-        editTextMessage = findViewById(R.id.activity_mentor_chat_message_edit_text);
-        imageViewPreview = findViewById(R.id.activity_mentor_chat_image_chosen_preview);
-        chatSendButton = findViewById(R.id.activity_mentor_chat_send_button);
-        addFileButton = findViewById(R.id.activity_mentor_chat_add_file_button);
-
-        //ROOT VIEW
-        rootView = findViewById(R.id.activity_mentor_chat_item_root_view);
-
-        //PROFILE CONTAINER
-        profileContainer = findViewById(R.id.activity_mentor_chat_item_profile_container);
-        imageViewProfile = findViewById(R.id.activity_mentor_chat_item_profile_container_profile_image);
-        imageViewIsMentor = findViewById(R.id.activity_mentor_chat_item_profile_container_is_mentor_image);
-
-        //MESSAGE CONTAINER
-        messageContainer = findViewById(R.id.activity_mentor_chat_item_message_container);
-        //IMAGE SENDED CONTAINER
-        cardViewImageSent = findViewById(R.id.activity_mentor_chat_item_message_container_image_sent_cardview);
-        imageViewSent = findViewById(R.id.activity_mentor_chat_item_message_container_image_sent_cardview_image);
-        //TEXT MESSAGE CONTAINER
-        textMessageContainer = findViewById(R.id.activity_mentor_chat_item_message_container_text_message_container);
-        textViewMessage = findViewById(R.id.activity_mentor_chat_item_message_container_text_message_container_text_view);
-        //DATE TEXT
-        textViewDate = findViewById(R.id.activity_mentor_chat_item_message_container_text_view_date);
+        ButterKnife.bind(this);
 
         uniqueIdBetween2Chats = Long.toString(mainUtils.convertHexToDecimal(getIntent().getStringExtra(getString(R.string.receiverId)), this.getCurrentUser().getUid()));
 
-        recyclerView = findViewById(R.id.activity_chat_recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         this.configureRecyclerView();
@@ -102,9 +62,6 @@ public class ChatsActivity extends BaseActivity implements ChatAdapter.Listener 
         Objects.requireNonNull(getSupportActionBar()).setTitle(getIntent().getStringExtra(getString(R.string.name_chat_person)));
         this.getCurrentUserFromFirestore();
 
-        chatSendButton.setOnClickListener(v -> onClickSendMessage());
-
-        addFileButton.setOnClickListener(v -> onClickAddFile());
     }
 
     // --------------------
@@ -118,8 +75,10 @@ public class ChatsActivity extends BaseActivity implements ChatAdapter.Listener 
         setSupportActionBar(toolbar);
     }
 
+    @OnClick(R.id.activity_mentor_chat_add_file_button)
     public void onClickAddFile() { }
 
+    @OnClick(R.id.activity_mentor_chat_send_button)
     public void onClickSendMessage() {
         // 1 - Check if text field is not empty and current user properly downloaded from Firestore
         if (!TextUtils.isEmpty(editTextMessage.getText()) && modelCurrentUser != null) {
