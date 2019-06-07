@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -35,6 +36,7 @@ import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import static com.ngtiofack.go4lunch.api.Go4LunchUserHelper.getUser;
 import static com.ngtiofack.go4lunch.utils.RestaurantsUtils.saveYourLunch;
@@ -52,9 +54,7 @@ public class DetailedRestaurantActivity extends BaseActivity {
     Button likeRestaurant;
 
     RequestManager glide;
-
     int numOfStars;
-
     static boolean fabIsClicked = true;
     static boolean dataChanged = true;
     static String uid;
@@ -64,6 +64,9 @@ public class DetailedRestaurantActivity extends BaseActivity {
     String photoReferenceUrl;
     int photoHeight;
     int photoWidth;
+
+    @BindView(R.id.relativeLayout)
+    RelativeLayout relativLyt;
 
     @BindView(R.id.list_workmates_recycler_view)
     RecyclerView mResultList;
@@ -90,7 +93,6 @@ public class DetailedRestaurantActivity extends BaseActivity {
     ImageView stars2;
 
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,95 +110,33 @@ public class DetailedRestaurantActivity extends BaseActivity {
         photoReferenceUrl = getIntent().getStringExtra(getString(R.string.photosReference));
         numOfStars = getIntent().getIntExtra(getString(R.string.number_of_stars), 0);
 
-        stars0.setVisibility(View.GONE);
-        stars1.setVisibility(View.GONE);
-        stars2.setVisibility(View.GONE);
-
-        switch (numOfStars) {
-            case 0:
-                break;
-            case 1:
-                stars0.setVisibility(View.VISIBLE);
-                break;
-            case 2:
-                stars0.setVisibility(View.VISIBLE);
-                stars1.setVisibility(View.VISIBLE);
-                break;
-            case 3:
-                stars0.setVisibility(View.VISIBLE);
-                stars1.setVisibility(View.VISIBLE);
-                stars2.setVisibility(View.VISIBLE);
-                break;
-
-            default:
-                break;
-        }
+        this.starsOfRestaurantsShow();
         fabIsClicked = true;
         nameOfRestaurant.setText(nameRestaurant);
         addressOfRestaurant.setText(vicinity);
-
-        if (!photoReferenceUrl.isEmpty()) {
-            photoHeight = getIntent().getIntExtra(getString(R.string.photoHeight), 1000);
-            photoWidth = getIntent().getIntExtra(getString(R.string.photoWidth), 1000);
-
-            glide.load(RestaurantsUtils.getPhotoUrl( photoReferenceUrl, photoHeight, photoWidth)).apply(RequestOptions.centerInsideTransform()).into(imgRestaurantDetails);
-        } else {
-
-            glide.load(R.drawable.restaurant_default_img).apply(RequestOptions.centerInsideTransform()).into(imgRestaurantDetails);
-        }
-
+        this.handelPhotoRef();
         uid = this.getCurrentUser().getUid();
-
-        getUser(uid)
-                .addOnSuccessListener(documentSnapshot -> {
-
-                    if (documentSnapshot != null) {
-                        Go4LunchUsers go4LunchUsers = documentSnapshot.toObject(Go4LunchUsers.class);
-                        restaurantSelectedStoreOnFirebase = Objects.requireNonNull(go4LunchUsers).getYourLunch().getName();
-
-                        if (restaurantSelectedStoreOnFirebase.equals(nameRestaurant)) {
-                            fab.setImageResource(R.drawable.check_restaurant);
-                            writeNewUser(getCurrentUser().getDisplayName(), nameRestaurant, Objects.requireNonNull(getCurrentUser().getPhotoUrl()).toString());
-                            fabIsClicked = false;
-                        }
-                    }
-
-                });
-
-        fab.setOnClickListener(view -> {
-
-            if (fabIsClicked) {
-                fab.setImageResource(R.drawable.check_restaurant);
-                // createUser()
-                updateRestaurantSelectedParams(new YourLunch(nameRestaurant, vicinity, photoHeight, photoWidth, photoReferenceUrl, numOfStars));
-                dataChanged = false;
-                deleteNewUser();
-                writeNewUser(getCurrentUser().getDisplayName(), nameRestaurant, Objects.requireNonNull(getCurrentUser().getPhotoUrl()).toString());
-                saveYourLunch(getApplicationContext(), nameRestaurant, vicinity, photoHeight, photoWidth, photoReferenceUrl, numOfStars);
-                fabIsClicked = false;
-
-            } else {
-                fabIsClicked = true;
-                dataChanged = true;
-                updateRestaurantSelectedParams(new YourLunch());
-                saveYourLunch(getApplicationContext(), RESTAURANT_IS_NOT_SELECTED, vicinity, photoHeight, photoWidth, photoReferenceUrl, numOfStars);
-                fab.setImageResource(R.drawable.please_select_restaurant);
-                deleteNewUser();
-            }
-        });
-
-        website.setOnClickListener(v -> Snackbar.make(v, this.getString(R.string.no_website_available), Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
-
-        phoneNum.setOnClickListener(v -> Snackbar.make(v, this.getString(R.string.phone_number_not_available), Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
-
-        likeRestaurant.setOnClickListener(v -> {
-            YourLunch likeRestaurant = new YourLunch(1);
-            FirebaseFirestore.getInstance().collection(LIKE).document(RESTAURANT_LIKE).collection(nameRestaurant).document(uid).set(likeRestaurant);
-        });
-
+        this.checkIfRestaurantsIsSelected();
+        this.handelFloatingButton();
         this.firebaseUserSearch(nameRestaurant);
+    }
+
+    @OnClick(R.id.websiteOfTheRestaurant)
+    public void onClickWebSite() {
+        Snackbar.make(relativLyt, DetailedRestaurantActivity.this.getString(R.string.no_website_available), Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+    }
+
+    @OnClick(R.id.phoneNumberRestaurant)
+    public void onClickCall() {
+        Snackbar.make(relativLyt, DetailedRestaurantActivity.this.getString(R.string.phone_number_not_available), Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+    }
+
+    @OnClick(R.id.likeButtonRestaurant)
+    public void onClickLikeRestaurant() {
+        YourLunch likeRestaurant = new YourLunch(1);
+        FirebaseFirestore.getInstance().collection(LIKE).document(RESTAURANT_LIKE).collection(nameRestaurant).document(uid).set(likeRestaurant);
     }
 
     private void firebaseUserSearch(String RestaurantName) {
@@ -280,4 +220,83 @@ public class DetailedRestaurantActivity extends BaseActivity {
         Go4LunchUserHelper.createUser(uid, username, urlPicture, isConnected, mYourLunch).addOnFailureListener(this.onFailureListener());
     }
 
+    private void starsOfRestaurantsShow() {
+        stars0.setVisibility(View.GONE);
+        stars1.setVisibility(View.GONE);
+        stars2.setVisibility(View.GONE);
+
+        switch (numOfStars) {
+            case 0:
+                break;
+            case 1:
+                stars0.setVisibility(View.VISIBLE);
+                break;
+            case 2:
+                stars0.setVisibility(View.VISIBLE);
+                stars1.setVisibility(View.VISIBLE);
+                break;
+            case 3:
+                stars0.setVisibility(View.VISIBLE);
+                stars1.setVisibility(View.VISIBLE);
+                stars2.setVisibility(View.VISIBLE);
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private void handelFloatingButton() {
+        fab.setOnClickListener(view -> {
+
+            if (fabIsClicked) {
+                fab.setImageResource(R.drawable.check_restaurant);
+                // createUser()
+                updateRestaurantSelectedParams(new YourLunch(nameRestaurant, vicinity, photoHeight, photoWidth, photoReferenceUrl, numOfStars));
+                dataChanged = false;
+                deleteNewUser();
+                writeNewUser(getCurrentUser().getDisplayName(), nameRestaurant, Objects.requireNonNull(getCurrentUser().getPhotoUrl()).toString());
+                saveYourLunch(getApplicationContext(), nameRestaurant, vicinity, photoHeight, photoWidth, photoReferenceUrl, numOfStars);
+                fabIsClicked = false;
+
+            } else {
+                fabIsClicked = true;
+                dataChanged = true;
+                updateRestaurantSelectedParams(new YourLunch());
+                saveYourLunch(getApplicationContext(), RESTAURANT_IS_NOT_SELECTED, vicinity, photoHeight, photoWidth, photoReferenceUrl, numOfStars);
+                fab.setImageResource(R.drawable.please_select_restaurant);
+                deleteNewUser();
+            }
+        });
+    }
+
+    private void handelPhotoRef() {
+        if (!photoReferenceUrl.isEmpty()) {
+            photoHeight = getIntent().getIntExtra(getString(R.string.photoHeight), 1000);
+            photoWidth = getIntent().getIntExtra(getString(R.string.photoWidth), 1000);
+
+            glide.load(RestaurantsUtils.getPhotoUrl(photoReferenceUrl, photoHeight, photoWidth)).apply(RequestOptions.centerInsideTransform()).into(imgRestaurantDetails);
+        } else {
+
+            glide.load(R.drawable.restaurant_default_img).apply(RequestOptions.centerInsideTransform()).into(imgRestaurantDetails);
+        }
+    }
+
+    private void checkIfRestaurantsIsSelected() {
+        getUser(uid)
+                .addOnSuccessListener(documentSnapshot -> {
+
+                    if (documentSnapshot != null) {
+                        Go4LunchUsers go4LunchUsers = documentSnapshot.toObject(Go4LunchUsers.class);
+                        restaurantSelectedStoreOnFirebase = Objects.requireNonNull(go4LunchUsers).getYourLunch().getName();
+
+                        if (restaurantSelectedStoreOnFirebase.equals(nameRestaurant)) {
+                            fab.setImageResource(R.drawable.check_restaurant);
+                            writeNewUser(getCurrentUser().getDisplayName(), nameRestaurant, Objects.requireNonNull(getCurrentUser().getPhotoUrl()).toString());
+                            fabIsClicked = false;
+                        }
+                    }
+
+                });
+    }
 }
