@@ -52,6 +52,7 @@ import java.util.Objects;
 import io.reactivex.observers.DisposableObserver;
 
 import static com.ngtiofack.go4lunch.utils.mainUtils.PROXIMITY_RADIUS;
+import static com.ngtiofack.go4lunch.utils.mainUtils.SET_INTERVAL;
 import static com.ngtiofack.go4lunch.utils.mainUtils.TYPE;
 import static com.ngtiofack.go4lunch.utils.mainUtils.bitmapDescriptorFromVector;
 
@@ -120,8 +121,8 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(
                 Objects.requireNonNull(getContext()), R.raw.style_google));
         LocationRequest locationRequest = new LocationRequest();
-        locationRequest.setInterval(1200000); // 5 secondes interval
-        locationRequest.setFastestInterval(1200000);
+        locationRequest.setInterval(SET_INTERVAL); // 5 secondes interval
+        locationRequest.setFastestInterval(SET_INTERVAL);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

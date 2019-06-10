@@ -28,6 +28,7 @@ public class mainUtils {
     public static final String COLLECTION_NAME = "messages";
     public static final String RESTAURANT_SELECTED = "restaurantSelected";
 
+    public static final int SET_INTERVAL = 120000;
 
     public static long convertHexToDecimal(String hexReceiverId, String hexSenderId){
 
