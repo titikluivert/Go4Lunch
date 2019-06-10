@@ -68,6 +68,7 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
     private OnDataPass dataPasser;
     private MarkerOptions markerOptions = new MarkerOptions();
     private List<String> reselected = new ArrayList<>();
+
     private LocationCallback mLocationCallback = new LocationCallback() {
 
         @Override
@@ -149,7 +150,7 @@ public class MapsViewFragment extends Fragment implements OnMapReadyCallback {
                 }
             } else {
                 Toast.makeText(mView.getContext(), "This app requires location permissions to be granted", Toast.LENGTH_LONG).show();
-                //finish();
+                //mView.finish();
             }
         }
     }

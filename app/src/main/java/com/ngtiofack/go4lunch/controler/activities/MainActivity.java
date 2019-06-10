@@ -96,6 +96,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 selectedFragment = new MapsViewFragment();
                 break;
             case R.id.navigation_dashboard:
+                currentLatLng = currentLocation.getSaveLatLng(this);
                 Objects.requireNonNull(getSupportActionBar()).setTitle(getApplicationContext().getString(R.string.im_hungry));
                 selectedFragment = ListViewFragment.newInstance(String.valueOf(currentLatLng.getLatitude()), String.valueOf(currentLatLng.getLongitude()));
                 break;
